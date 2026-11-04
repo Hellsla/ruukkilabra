@@ -1,0 +1,1033 @@
+/* Ruukkilabra (formerly Fysiikkalabra): matches the look of the main site (cream background, green accent, Fraunces + Plus Jakarta Sans).
+   Fonts are self-hosted from vendor/fonts, so no request goes to a third party.
+
+   Design system (teacher's brief 2026-10-27, "desktop-UI ja visuaalinen hierarkia"):
+   - Three levels on a lesson page. 1 the stage (Pohdinta, Ennusta, Tutki ...): a numbered 24 px heading on a full-width
+     rule with room above it. 2 the task (Ennuste 1, Koe 1, a check question): one card that holds its heading, instructions,
+     answer fields, table and feedback. 3 what sits inside a task (hints, tables, feedback, model answers): tinted panels
+     in a smaller size that never compete with a heading.
+   - One type scale: lesson title 32–36 px Fraunces, stage 24 px, task 19 px, text and answers 18 px on a 1.6 line,
+     interface 15–16 px, meta and captions 14 px, all Plus Jakarta Sans except the title, the Miksi question and the
+     opening story. Monospace is not used for prose. A small screen never gets smaller text.
+   - Readability (teacher's brief 2026-10-27, "luettavuus ja taitto"; CLAUDE.md "Lesson page"): one reading column of
+     38rem for text and tasks, at every width. Tasks are never side by side: a card grows when its feedback, hints or
+     solution opens, and must not leave an empty column beside it. Width is used only where two things belong together
+     and are about as tall: the chapter illustration beside the lesson's goals, a figure beside the paragraph it explains
+     (build.py fig_rows decides), the simulation beside the experiments (sticky). The worked example reads down the
+     column, its steps under the problem (teacher 2026-11-03). After such a unit the text runs on in the reading column.
+   - The simulations keep their own type (17 px on a 1.65 line, set on body and #sim): p5 measures its labels in a span
+     on the body, so the reading text can change without moving a label in a sim.
+   - From 85rem of window the stage navigation moves from the sticky chip bar to a sticky side column. Nothing breaks
+     out of its box with negative margins. scripts/check_layout.py checks all of this in every open state. */
+@font-face{font-family:"Fraunces";font-style:normal;font-weight:100 900;font-display:swap;src:url(vendor/fonts/fraunces-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"Fraunces";font-style:italic;font-weight:100 900;font-display:swap;src:url(vendor/fonts/fraunces-latin-wght-italic.woff2) format("woff2")}
+@font-face{font-family:"Plus Jakarta Sans";font-style:normal;font-weight:200 800;font-display:swap;src:url(vendor/fonts/plus-jakarta-sans-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"Plus Jakarta Sans";font-style:italic;font-weight:200 800;font-display:swap;src:url(vendor/fonts/plus-jakarta-sans-latin-wght-italic.woff2) format("woff2")}   /* a real italic: the synthesized slant leaned into the next space ("transferredbecause") */
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:100 800;font-display:swap;src:url(vendor/fonts/jetbrains-mono-latin-wght-normal.woff2) format("woff2")}
+
+:root{
+  --bg:#f7f3ec;--bg-tint:#efeadd;--surface:#fff;--ink:#14171e;--ink-2:#474c5b;
+  --line:#e3dccb;--line-2:#eee8d9;--accent:#1a4d2e;--brand-green:#1a4b2e;--accent-soft:#ecf5ee;--accent-deep:#14532d;
+  --serif:"Fraunces","Iowan Old Style",Georgia,serif;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",monospace;
+  /* type scale: the size says how important the text is, not which component it is in */
+  --fs-title:clamp(2rem,1.55rem + 1.2vw,2.25rem);   /* lesson title, 32–36 px */
+  --fs-h2:1.5rem;        /* stage heading, 24 px */
+  --fs-h3:1.1875rem;     /* task heading, 19 px */
+  --fs-body:1.125rem;    /* reading text, instructions, answers, 18 px */
+  --fs-inner:1.0625rem;  /* inside a task: feedback, hints, solutions, 17 px */
+  --fs-ui:.9375rem;      /* buttons and box summaries, 15 px */
+  --fs-small:.875rem;    /* meta: counts, captions, table heads, notes, 14 px */
+  --lh:1.6;--lh-head:1.25;
+  --sim-fs:1.0625rem;--sim-lh:1.65;   /* the body and the simulations: p5 measures its text in a span on the body, and the sims' label tests rely on it */
+  /* spacing and measure */
+  --measure:38rem;--gap:2.5rem;   /* text column (about 70 characters) and the gutter between the text and margin tracks */
+  --stage-space:4.5rem;          /* above a stage */
+  --card-pad:1.25rem 1.5rem;--card-radius:16px;--inner-radius:10px;
+  --sticky-top:4.5rem;           /* below the sticky stage bar */
+  /* figure palette (NOTES.md §3): one meaning per colour across every lesson; text and patterns carry the same information */
+  --fig-ink:#1f2933;--fig-muted:#6b7480;--fig-line:#c9c2b2;--fig-paper:#fffdf8;
+  --fig-water:#2f74b5;--fig-water-light:#bcdcf3;--fig-sand:#d9b26a;--fig-sand-dark:#a97a35;--fig-sand-light:#f1dfb5;
+  --fig-heat:#e8590c;--fig-hot:#c92a2a;--fig-hot-light:#ffd8cc;--fig-cold:#1971c2;--fig-cold-light:#d0e6fb;
+  --fig-metal:#8a96a3;--fig-copper:#b8622d;--fig-ice:#a5d8ff;--fig-glass:#eef5f9;
+}
+@media (max-width:600px){:root{--card-pad:1rem 1rem;--stage-space:3.25rem}}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:var(--sim-fs)/var(--sim-lh) var(--sans);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 18% 8%,rgba(26,77,46,.06),transparent 32rem),radial-gradient(circle at 90% 0,rgba(26,77,46,.04),transparent 28rem);background-repeat:no-repeat}
+a{color:var(--accent-deep);text-underline-offset:.18em}
+a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.page{width:min(80rem,calc(100% - 32px));margin:0 auto;padding:18px 0 40px}
+main.reading{max-width:var(--measure);margin-inline:auto;container:content / inline-size;font-size:var(--fs-body);line-height:var(--lh)}
+main p,main ul,main ol{margin:0 0 1em}main li>p{margin:0 0 .5em}
+@media (min-width:64rem){main.lesson{max-width:72rem;margin-inline:auto}}   /* from a small laptop up: room for a figure or the simulation (its 600 px canvas at native size from 1280 px) beside the reading column */
+
+/* header (teacher 2026-10-29): the compact brand, the modules link and the language control; Portfolio is in the footer.
+   One row at every width: the modules link gives way on a narrow phone (the brand and the breadcrumb lead to it there),
+   every target is at least 44 px. */
+header.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 12px;padding-bottom:10px;margin-bottom:8px;border-bottom:1px solid var(--line);position:relative;z-index:40}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);min-height:44px;min-width:0;border-radius:8px}
+.brand-mark{width:40px;height:40px;flex:none}
+.brand-name{display:flex;flex-direction:column;font:800 1.14rem/1.1 var(--sans);letter-spacing:-.01em;color:var(--brand-green);overflow-wrap:break-word}
+.brand-name small{font:700 .68rem/1.3 var(--sans);letter-spacing:.16em;text-transform:uppercase;margin-top:2px}
+header.top nav{display:flex;align-items:center;gap:4px;flex:none;margin-left:auto}
+header.top nav>a,.lang-menu>summary{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font:600 var(--fs-ui) var(--sans);color:var(--ink-2);text-decoration:none;border-radius:999px}
+header.top nav>a:hover,.lang-menu>summary:hover{color:var(--ink);background:var(--bg-tint)}
+header.top nav>a:active,.lang-menu>summary:active{background:var(--line)}
+@media (max-width:29.99rem){header.top nav>a.nav-modules{display:none}.brand-name small{letter-spacing:.06em}.lang-menu>summary{padding:0 10px}}
+@media (max-width:39.99rem){header.top nav>a.nav-reading,header.top nav>a.nav-study{display:none}}   /* Lukuvinkit gives way first on a phone; the footer of every page links to it */
+@media (max-width:51.99rem){header.top nav>a.nav-about{display:none}}   /* Sivustosta (front page only) needs about 800 px to keep the header on one row; the footer links it */
+.visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* the language control: the current language on a quiet button, the others in a small panel (a <details>, no script) */
+.lang-menu{position:relative;margin:0}
+.lang-menu>summary{gap:.4rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);list-style:none}
+.lang-menu>summary::-webkit-details-marker{display:none}
+.lang-menu>summary::before,.lang-menu[open]>summary::before{content:none;display:none}
+.lang-menu>summary::after{content:"";width:.45rem;height:.45rem;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);flex:none}
+.lang-menu[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
+.lang-list{position:absolute;right:0;top:calc(100% + 6px);z-index:50;list-style:none;margin:0;padding:.35rem;min-width:13.5rem;max-width:min(18rem,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 28px rgba(20,23,30,.12)}
+.lang-list li{margin:0}
+.lang-list a.lang{display:flex;align-items:center;min-height:44px;padding:0 .75rem;border-radius:8px;color:var(--ink);font:600 var(--fs-ui) var(--sans);text-decoration:none}
+.lang-list a.lang:hover{background:var(--bg-tint);color:var(--accent-deep)}
+.lang-list a.lang:active{background:var(--line)}
+.lang-note{display:block;padding:0 .75rem .45rem;margin-top:-.3rem;font-size:.8125rem;line-height:1.35;color:var(--ink-2)}
+.crumbs{font-size:var(--fs-small);color:var(--ink-2);margin:.4rem 0 1.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:0 .25rem}
+.crumbs a{color:var(--accent-deep);display:inline-flex;align-items:center;justify-content:center;min-height:40px;min-width:40px;padding:0 .3rem;margin:0 -.3rem;text-decoration:none}
+
+/* type: Fraunces for the titles and the opening question, Plus Jakarta Sans for every other heading */
+h1,h2,h3,h4{color:var(--ink);line-height:var(--lh-head)}
+h1{font:500 var(--fs-title)/1.12 var(--serif);letter-spacing:-.02em;margin:.2rem 0 1rem}
+h2{font:700 var(--fs-h2)/var(--lh-head) var(--sans);letter-spacing:-.01em;margin:2.4rem 0 .75rem}
+h3{font:700 var(--fs-h3)/var(--lh-head) var(--sans);margin:1.6rem 0 .5rem}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font:600 var(--fs-small) var(--sans);color:var(--accent-deep);letter-spacing:.08em;text-transform:uppercase;margin:.4rem 0 .6rem}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor}
+.lead{font:400 1.2rem/1.5 var(--serif);color:var(--ink-2);max-width:36rem}
+blockquote{margin:1.4rem 0;padding:.9rem 1.2rem;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 12px 12px 0;font:400 1.1875rem/1.5 var(--serif)}
+blockquote strong{font-weight:600;color:var(--accent-deep)}
+blockquote p{margin:0}
+li{margin:.4rem 0}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:.7rem 1rem;margin:1rem 0;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+@media (max-width:389px){.katex-display{padding:.6rem .6rem}.katex-display>.katex{font-size:1.03em}}   /* narrow phone only: display maths a step smaller (1.21em → 1.03em) so the widest rows (fy3-3, fy2-3's kWh in joules) fit 360 px also with CI's fonts; at 390 px and up nothing overflows, so formulas stay full size */
+.notice{margin:.8rem 0 0;padding:.6rem .9rem;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;background:var(--surface);font-size:var(--fs-small)}
+.fig-tex{font-size:.85em;line-height:1.25;color:inherit;white-space:nowrap}.fig-tex .katex{font-size:1.1em}
+.fig-tex[style*="font-size"] .katex{font-size:1em}   /* a figlib label (scripts/figlib.py) is exactly as large as the font-size its box sets */
+article svg{max-width:100%;height:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.4rem}
+article svg.fig-hero{display:block;width:100%;padding:0;margin:0 0 1.4rem;background:#f6f1e6}   /* the chapter's opening illustration under the Miksi question (figlib Fig hero) */
+article .katex svg{max-width:none;height:inherit;background:none;border:0;border-radius:0;padding:0}   /* KaTeX draws \sqrt and stretchy arrows as svg: the figure frame above must not box them (2026-10-29, fy4-2) */
+
+/* front page (teacher 2026-10-29, "editorial textbook"; trimmed 2026-10-31): a short opening without calls to action,
+   then the module catalogue as lightly divided rows (one link each, stretched over its row), the school-specific
+   courses as rows of the same anatomy, the upcoming modules in a compact list, and one study guide: the six stages
+   in a compact numbered row with more tips behind a disclosure. Neutral rules, no cards and no bars:
+   the numbers are what is published, never a student's progress. Green is the brand and the interaction colour,
+   copper only a thin accent (its text shade --copper-ink keeps 5:1 on the cream). */
+:root{--copper:#b85f2a;--copper-ink:#a3521f}
+main.home{max-width:68rem;margin-inline:0;font-size:var(--fs-body);line-height:var(--lh)}
+main.home section{margin:0}
+main.home,main.reading:not(.lesson){hyphens:auto;overflow-wrap:break-word}   /* long Finnish compounds wrap with enlarged text instead of running off a phone */
+main.home h2{font:600 clamp(1.5rem,1.3rem + .6vw,1.75rem)/1.2 var(--serif);letter-spacing:-.01em;margin:0 0 .4rem}
+.section-lead{font-size:var(--fs-ui);color:var(--ink-2);max-width:40rem;margin:0 0 1rem}
+/* compacted 2026-11-03 ("tiivistä etusivu"): the heading, one line under it and the module list in two columns from
+   700 px fit one desktop screen with the footer. A row is one link: icon, code, title and the Miksi question in the
+   secondary colour (cut to one line in two columns, whole in its title); hover and focus tint the row and show the
+   arrow. On the right, Tulossa is dimmed (--text-muted, a faded icon, no hover tint) and the school's own courses
+   follow under the school's name; the group headings are small and low, so they never match a row's height. */
+:root{--text-muted:#5f6370}
+main.home{max-width:none}
+main.home+footer.bottom{margin-top:1.75rem}
+.home-intro{padding:clamp(.6rem,2vw,1.6rem) 0 clamp(1rem,2.2vw,1.6rem)}
+.home-intro h1{font:500 clamp(2rem,1.55rem + 1.9vw,3rem)/1.08 var(--serif);letter-spacing:-.025em;margin:0 0 .45rem;color:var(--ink)}
+.home-intro .lead{font:400 clamp(1.0625rem,1rem + .25vw,1.1875rem)/1.45 var(--sans);color:var(--ink-2);max-width:none;margin:0;hyphens:manual}
+@media (min-width:64rem){.home-intro .lead{white-space:nowrap}}
+.mod-cols{display:grid;grid-template-columns:minmax(0,1fr);gap:1.4rem 2.5rem;align-items:start}
+@media (min-width:700px){.mod-cols{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(1.25rem,3vw,2.5rem)}}
+.mod-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.mod-list>li{margin:0;border-bottom:1px solid var(--line)}
+.mod-group{font:700 .75rem/1.2 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin:0 0 .35rem}
+.mod-group~.mod-group{margin-top:1rem}
+/* the school's logo (teacher 2026-11-04: emblem and name, its courses level with the national modules). Under 700 px it
+   heads the school's list; from 700 px it stands in the intro over the right column and the list's heading is visually
+   hidden: under the heading and lead in two columns, beside them (in the right column) once they fit in the left one */
+.mod-school img{display:block;height:56px;width:auto}
+.intro-school{display:none;height:56px;width:auto}
+@media (min-width:700px){
+  .home-intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:clamp(1.25rem,3vw,2.5rem)}
+  .home-intro>h1,.home-intro>.lead{grid-column:1/-1}
+  .intro-school{display:block;grid-column:2;margin:.9rem 0 0}
+  .mod-side>.mod-school:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;margin:0}}
+@media (min-width:1200px){
+  .home-intro>h1,.home-intro>.lead{grid-column:1}
+  .intro-school{grid-column:2;grid-row:1/3;align-self:end;margin:0}}
+.mod-row{display:flex;align-items:center;gap:.8rem;min-height:56px;padding:.45rem .6rem;color:var(--ink);text-decoration:none;border-radius:8px}
+.mod-icon{display:block;width:40px;height:40px;flex:none}
+.mod-text{display:flex;flex-direction:column;flex:1;min-width:0}
+.mod-name{font:600 1.0625rem/1.3 var(--sans);color:var(--ink)}
+.mod-code{font:700 var(--fs-small)/1.5 var(--sans);letter-spacing:.06em;color:var(--accent-deep)}
+.mod-name .mod-code{margin-right:.35rem}
+.mod-q{font-size:var(--fs-small);line-height:1.4;color:var(--ink-2)}
+.mod-go{flex:none;width:1.25rem;font:700 1.125rem/1 var(--sans);color:var(--accent-deep);text-align:right;opacity:0}
+.mod-row:hover,.mod-row:focus-visible{background:var(--bg-tint)}
+.mod-row:hover .mod-go,.mod-row:focus-visible .mod-go{opacity:1}
+.mod-row:hover .mod-title{color:var(--accent-deep)}
+.mod-row:focus-visible{outline-offset:0}
+.mod-row.coming .mod-code,.mod-row.coming .mod-title,.mod-row.coming .mod-q{color:var(--text-muted)}
+.mod-row.coming .mod-name{font-weight:500}
+.mod-row.coming .mod-icon{filter:grayscale(1);opacity:.55}
+.mod-row.coming:hover{background:none}.mod-row.coming:hover .mod-go{opacity:0}.mod-row.coming:hover .mod-title{color:var(--text-muted)}
+@media (min-width:700px){   /* two columns: at most 64 px a row; a long title may take two lines in the narrow range, never cut */
+  .mod-row{min-height:60px;padding-block:.2rem}
+  .mod-q{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+@media (min-width:700px) and (max-width:63.99rem){.mod-name{font-size:.9375rem;line-height:1.25}.mod-q{font-size:.8125rem;line-height:1.3}.mod-row{gap:.6rem;padding-inline:.4rem}}
+/* the learning model (moved to the top of Lukuvinkit 2026-11-03): the six stage names the lessons use, a compact
+   numbered sequence on thin rules, two columns in the reading column, more tips behind a disclosure */
+.path{margin:0 0 2.6rem}
+.path h1,.path h2{margin-top:.6rem}
+.path .section-lead{margin-bottom:.4rem}
+.path-steps{list-style:none;counter-reset:step;padding:0;margin:1rem 0 0;display:grid;grid-template-columns:1fr;column-gap:1.6rem;border-top:1px solid var(--line)}
+.path-steps li{counter-increment:step;margin:0;display:grid;align-content:start;grid-template-columns:2rem minmax(0,1fr);column-gap:.4rem;padding:.6rem 0;border-bottom:1px solid var(--line-2);font-size:var(--fs-ui);line-height:1.45;color:var(--ink-2)}
+.path-steps li::before{content:counter(step);grid-row:span 2;font:600 1.25rem/1.2 var(--serif);color:var(--copper-ink)}
+.path-steps strong{font:700 1rem/1.35 var(--sans);color:var(--ink)}
+@container content (min-width:34rem){.path-steps{grid-template-columns:repeat(2,1fr)}}
+details.more-tips{margin:.6rem 0 0}
+details.more-tips>summary{min-height:44px;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+details.more-tips ul{margin:.3rem 0 0;padding-left:1.3rem;font-size:1rem;line-height:1.55;color:var(--ink-2)}
+details.more-tips li{margin:.35rem 0}
+/* module page: the lessons first (available ones are links, the rest marked coming), then Sovella, then the goals
+   behind one disclosure; a note at #unavailable-<id> is shown when a language link from a page not published in
+   this language lands here */
+.mod-head{display:flex;align-items:center;gap:1rem;margin:.2rem 0 1rem}.mod-head h1{margin:.1rem 0 0}.mod-head>div{min-width:0}.mod-head .eyebrow{margin-top:0}
+.mod-head-icon{display:block;width:3.5rem;height:3.5rem;flex:none}
+@media (max-width:30rem){.mod-head{gap:.75rem}.mod-head-icon{width:3rem;height:3rem}}
+.mod-status{font:600 var(--fs-ui) var(--sans);color:var(--ink);margin:-.2rem 0 1.2rem}
+p.unavailable{display:none;margin:0 0 1.2rem;padding:.75rem 1rem;border:1px solid var(--line);border-left:4px solid var(--copper);border-radius:10px;background:var(--surface);font-size:var(--fs-ui);line-height:1.5}
+p.unavailable:target{display:block}p.unavailable:focus{outline:none}p.unavailable:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+ol.lessons{list-style:none;padding:0;margin:.6rem 0 1.4rem;border-top:1px solid var(--line)}
+ol.lessons li{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .6rem;margin:0;padding:.15rem 0;border-bottom:1px solid var(--line-2)}
+ol.lessons .l-num{flex:0 0 1.8rem;text-align:right;font:600 var(--fs-small)/1 var(--sans);color:var(--ink-2);font-variant-numeric:tabular-nums}
+ol.lessons li.live a{display:inline-flex;align-items:center;min-height:44px;flex:1 1 9rem;min-width:0;hyphens:auto;overflow-wrap:break-word;padding:.35rem 0;font-weight:700;color:var(--accent-deep);text-decoration:none}
+ol.lessons li.live a::after{content:"→";margin-left:.5em;flex:none}
+ol.lessons li.live a:hover{text-decoration:underline}
+ol.lessons li.soon{color:var(--ink-2)}ol.lessons li.soon>span:not(.l-num):not(.tag){flex:1 1 9rem;min-width:0;padding:.6rem 0;hyphens:auto;overflow-wrap:break-word}
+ol.lessons li>.tag{margin-left:auto}
+ol.lessons .tag{font-size:.8125rem;font-weight:600;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:0 .55rem;line-height:1.6}
+/* Module page: chapter cards (teacher 2026-11-03, "Ruukkikortit"). Each published chapter is one card with its own opening
+   illustration, number, title (the card's only link, stretched over the card) and Miksi question, under the module's
+   themes (curriculum.json "themes"). A phone shows a row: a small picture beside the number and title, the question
+   under them; from a 40rem column the cards form a grid. The page is wider than a reading page (68rem), and
+   Sovella itsenäisesti, Käsitetakomo and the goals sit side by side under the cards when there is room. */
+main.reading.module-page{max-width:68rem}
+main.module-page>.lead,main.module-page>.mod-status{max-width:var(--measure)}
+main.local-course>p,main.local-course>ul,main.local-course>ol:not(.ch-cards),main.local-course>dl,main.local-course>details{max-width:var(--measure)}   /* a school's own course: its prose at reading width, the cards wide */
+h3.ch-theme{font:600 var(--fs-small)/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);margin:1.4rem 0 .6rem}
+ol.lessons.ch-cards>li:first-child>h3.ch-theme{margin-top:.6rem}
+/* a local course chapter's label (scripts/cardgrid.py): its heading and question above its first card */
+ol.lessons li.ch-card>.ch-label{margin:1.4rem 0 .6rem}ol.lessons.ch-cards>li:first-child>.ch-label{margin-top:.6rem}
+.ch-label>h3.ch-theme{margin:0}.ch-label>p.ch-theme-q{margin:.2rem 0 0;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2)}
+.ch-card .l-num .bank-level{text-transform:none;letter-spacing:0;font-size:.8125rem;padding:0 .45rem}
+.ch-card .bank-meta{margin:0}
+/* One continuous grid (teacher 2026-11-04): each li holds the theme label (only the theme's first chapter has one) and the
+   card (.ch-box). From 40rem each li spans two subgrid rows, label and card, so a row's label strip is as tall as its
+   tallest label and zero in a row without one; the next theme's cards continue beside a short theme without a hole. */
+ol.lessons.ch-cards{display:grid;grid-template-columns:1fr;gap:0;border-top:0;margin:0 0 1rem}
+ol.lessons li.ch-card{display:block;margin:0;padding:0;border:0}
+ol.lessons li.ch-card>.ch-box{position:relative;display:grid;grid-template-columns:7.5rem minmax(0,1fr);grid-template-areas:"img num" "img title" "why why" "tags tags";
+  align-items:start;gap:.15rem .9rem;margin:0 0 .75rem;padding:.75rem;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:0 1px 2px rgba(20,23,30,.04)}
+ol.lessons li.ch-card.soon>.ch-box{background:transparent;border-style:dashed;grid-template-columns:minmax(0,1fr);grid-template-areas:"num" "title" "tags"}
+ol.lessons li.ch-card .l-num{grid-area:num;text-align:left;flex:none;font:600 var(--fs-small)/1.4 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--copper-ink)}
+ol.lessons li.ch-card .ch-box>a,ol.lessons li.ch-card .ch-box>.ch-title{grid-area:title;display:block;min-height:0;padding:0;font:700 1.0625rem/1.35 var(--sans);hyphens:auto;overflow-wrap:break-word}
+ol.lessons li.ch-card.live .ch-box>a{color:var(--accent-deep);text-decoration:none}
+ol.lessons li.ch-card.live .ch-box>a::after{content:"";position:absolute;inset:0;border-radius:12px;margin:0}   /* the whole card is the link's target */
+ol.lessons li.ch-card.live .ch-box>a:focus-visible{outline:none}ol.lessons li.ch-card.live .ch-box:has(>a:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+ol.lessons li.ch-card.live .ch-box:hover{border-color:var(--accent);box-shadow:0 6px 18px rgba(20,23,30,.08)}
+ol.lessons li.ch-card.live .ch-box:hover>a{text-decoration:underline}
+.ch-card .ch-img{grid-area:img;aspect-ratio:2/1;overflow:hidden;border-radius:8px;background:var(--bg-tint);align-self:start}
+.ch-card .ch-img svg{display:block;width:100%;height:100%}
+.ch-card p.ch-why{grid-area:why;margin:.45rem 0 0;font-size:var(--fs-small);line-height:1.5;color:var(--ink-2)}
+.ch-card p.ch-tags{grid-area:tags;margin:.5rem 0 0;display:flex;flex-wrap:wrap;gap:.35rem}
+.ch-card p.ch-tags .tag{margin:0}
+@container content (min-width:40rem){
+  ol.lessons.ch-cards{grid-template-columns:repeat(auto-fill,minmax(15.5rem,1fr));column-gap:1rem}
+  ol.lessons li.ch-card{display:grid;grid-row:span 2;grid-template-rows:subgrid}
+  ol.lessons li.ch-card>h3.ch-theme{grid-row:1;align-self:end;margin:1rem 0 .6rem}
+  ol.lessons.ch-cards>li:first-child>h3.ch-theme{margin-top:.6rem}
+  ol.lessons li.ch-card>.ch-label{grid-row:1;align-self:end;margin:1rem 0 .6rem}
+  ol.lessons.ch-cards>li:first-child>.ch-label{margin-top:.6rem}
+  ol.lessons li.ch-card>.ch-box{grid-row:2;margin-bottom:1rem}
+  ol.lessons li.ch-card.live>.ch-box{grid-template-columns:minmax(0,1fr);grid-template-areas:"img" "num" "title" "why" "tags";grid-template-rows:auto auto auto 1fr auto;padding:0 0 .9rem;overflow:hidden}
+  ol.lessons li.ch-card.live>.ch-box>*:not(.ch-img){margin-inline:1rem}
+  ol.lessons li.ch-card.live .l-num{margin-top:.75rem}
+  .ch-card .ch-img{border-radius:0;border-bottom:1px solid var(--line-2)}
+  ol.lessons li.ch-card.soon>.ch-box{padding:1rem}
+}
+.mod-more{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:0 2.5rem;margin-top:1.4rem}
+.mod-more>section>h2:first-child{margin-top:1rem}
+/* Lukiokohtaiset opintojaksot (teacher 2026-10-30, scripts/local_courses.py): on the front page their own section after
+   the national modules, rows as the catalogue's; the course page reuses the module page's parts (eyebrow, notes,
+   the numbered list with "suunnitteilla" tags) and adds plain lists for goals, ways of working, the report sections
+   and the chapters to prepare with. No cards, the one reading column. */
+.notice.local-status{border-left-color:var(--copper);margin-bottom:1.2rem}
+.local-desc{max-width:38rem}
+.local-goals,.local-report{max-width:38rem;padding-left:1.3rem}
+.local-goals li::marker,.local-report li::marker{color:var(--accent-deep);font-weight:700}
+dl.local-modes{max-width:38rem;margin:.6rem 0 1.4rem;border-top:1px solid var(--line)}
+dl.local-modes dt{font-weight:700;margin:.7rem 0 .15rem}
+dl.local-modes dd{margin:0;padding-bottom:.7rem;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
+ul.local-prepare{list-style:none;max-width:38rem;padding:0;margin:.6rem 0 1.4rem;border-top:1px solid var(--line)}
+ul.local-prepare li{margin:0;padding:.35rem 0 .6rem;border-bottom:1px solid var(--line-2)}
+ul.local-prepare .mod-code{margin-right:.5rem}
+ul.local-prepare a{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--accent-deep);text-decoration:none}
+ul.local-prepare a::after{content:"→";margin-left:.5em}
+ul.local-prepare a:hover{text-decoration:underline}
+.local-why{display:block;font-size:var(--fs-ui);color:var(--ink-2)}
+/* the investigation bank of a course page (teacher 2026-10-31, investigations.py bank, invfilter.js): a small filter
+   form on one tinted panel (one column on a phone, the search over four selects from 48rem), then the one list: the
+   name as the link, the question, and a quiet meta line (topic, F and E levels as pills, working modes, modules). */
+.bank-filter{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem 1rem;margin:.8rem 0 1rem;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--surface);max-width:52rem}
+.bank-filter[hidden]{display:none}
+.bank-search,.bank-reset,.bank-count{grid-column:1 / -1}
+@media (min-width:48rem){.bank-filter{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.bank-field{display:flex;flex-direction:column;gap:.25rem;min-width:0}
+.bank-field label{font:600 var(--fs-small)/1.3 var(--sans);color:var(--ink)}
+.bank-field input,.bank-field select{min-height:44px;padding:.35rem .6rem;font:400 1rem var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;min-width:0;width:100%}
+.bank-field input:focus-visible,.bank-field select:focus-visible,.bank-reset:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.bank-reset{justify-self:start;min-height:44px;padding:0 1rem;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);background:transparent;border:1px solid var(--line);border-radius:999px;cursor:pointer}
+.bank-reset:hover{background:var(--bg-tint)}
+.bank-count{margin:0;font-size:var(--fs-small);color:var(--ink-2)}
+@media (min-width:48rem){.bank-filter .bank-reset{grid-column:1}.bank-filter .bank-count{grid-column:2 / -1;align-self:center}}
+.bank-random{white-space:nowrap}
+@media (min-width:48rem){.bank-filter .bank-random{grid-column:1 / -1}}
+.bank-none{margin:.6rem 0;padding:.7rem 1rem;border-left:4px solid var(--copper);background:var(--surface);border-radius:0 10px 10px 0}
+ol.bank-list li.bank-item[hidden]{display:none}
+.bank-meta{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .7rem;flex-basis:100%;margin:.2rem 0 .45rem;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2)}
+.bank-topic{font-weight:700;color:var(--accent-deep)}
+.bank-level{font-weight:700;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:0 .5rem;font-variant-numeric:tabular-nums}
+.tvt-used{margin:.6rem 0 0;font-size:var(--fs-ui)}
+.tvt-used a{font-weight:600}
+article.guide{padding-bottom:60vh} /* a short guide page: room below its last section, so following its link in the stage navigation brings that heading to the top */
+figure.shot{margin:1rem 0}figure.shot img{display:block;max-width:100%;max-height:34rem;width:auto;height:auto;border:1px solid var(--line);border-radius:12px}figure.shot figcaption{margin-top:.35rem;font-size:var(--fs-small);color:var(--ink-2)}   /* a screenshot of Graphical Analysis in a TVT-ohje (guides.py): never wider than the column, its size kept while it loads */
+
+ul.practice-link{padding-left:0;list-style:none}ul.practice-link a{display:inline-flex;align-items:center;min-height:44px;font-weight:700}
+details.goals>summary{min-height:44px;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+details.goals>p{margin:.6rem 0 .3rem}
+.count{color:var(--ink-2);font-size:var(--fs-small);font-weight:400}
+.back{margin-top:2rem}
+
+/* boxes that open: one summary style, a level-3 element in 15 px */
+details{margin:.5rem 0}
+summary{cursor:pointer;min-height:40px;display:flex;align-items:center}
+summary::before{content:"▸";display:inline-block;width:1.2em;flex:none;color:var(--accent-deep)}
+details[open]>summary::before{content:"▾"}
+details.answer,details.solution{margin:.2rem 0 .6rem}
+details.answer>summary,details.solution>summary,.hints summary,details.sim-box>summary,#sim-root details.note>summary{color:var(--accent-deep);font:600 var(--fs-ui) var(--sans)}
+details.answer p{margin:.2rem 0 0 1.2rem;background:var(--accent-soft);border-radius:8px;padding:.35rem .7rem;display:inline-block}
+details.answer .answer-body{margin:.2rem 0 0 1.2rem;background:var(--accent-soft);border-radius:8px;padding:.5rem .8rem;font-size:var(--fs-inner)}
+details.answer .answer-body p{display:block;margin:0 0 .4rem;padding:0;background:none}details.answer .answer-body>:last-child{margin-bottom:0}
+/* a calculation in rows (scripts/mathlayout.py chain_html): the relation signs in one column, each side wraps after an
+   operator on a narrow screen instead of running off it */
+.eq-chain{display:grid;grid-template-columns:fit-content(min(55vw,24rem)) minmax(0,1fr);column-gap:.3em;row-gap:.15rem;width:fit-content;max-width:100%;margin:.5rem 0 .7rem;padding:.55rem .9rem;background:var(--surface);border:1px solid var(--line-2);border-radius:var(--inner-radius)}
+.eq-row{display:contents}.eq-row.gap>span,.eq-lead.gap{margin-top:.6rem}
+.eq-lead{grid-column:1/-1}.eq-chain.lead .eq-r{padding-left:1.4em}
+.eq-l{text-align:right;min-width:0}.eq-r{min-width:0}
+.eq-chain .katex{font-size:1.1em}
+.eq-chain{align-items:baseline}.eq-chain>.eq-row:has(.mfrac)>span,.eq-chain>.eq-row:has(.mfrac)+.eq-row>span{padding-top:.3em}   /* a \dfrac row's denominator no longer jams into the next row; both sides of a row on one baseline, so t and = sit level with the fraction bar (visual audits 2026-11-01) */
+/* a solution: every step a block with its label on a line of its own; long calculations in aligned rows (build.py
+   solution_html, scripts/mathlayout.py); the answer set apart, the reasonableness check its own block */
+details.solution .steps{margin:.3rem 0 0;padding:.9rem 1.1rem;background:var(--bg);border:1px solid var(--line-2);border-radius:var(--inner-radius);font-size:var(--fs-inner);line-height:1.6}
+details.solution .steps p{margin:0 0 .5rem}details.solution .steps p:last-child{margin-bottom:0}details.solution .steps strong{color:var(--accent-deep)}
+.sol-step{padding:.6rem 0 .7rem;border-top:1px solid var(--line-2)}.sol-step:first-child{border-top:0;padding-top:0}.sol-step:last-child{padding-bottom:0}
+.sol-step>:last-child{margin-bottom:0}
+p.sol-label{margin:0 0 .25rem;font:700 var(--fs-small)/1.3 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep)}
+.sol-step .katex-display,.hints .katex-display,details.answer .katex-display{margin:.5rem 0;background:var(--surface)}
+@media (max-width:600px){.eq-chain{padding:.5rem .6rem}.eq-chain .katex,.steps .katex-display>.katex{font-size:1em}.hints details>div,details.answer .answer-body{margin-left:0}}
+@media (max-width:389px){:root{--card-pad:1rem .85rem}.steps .katex-display>.katex,.hints .katex-display>.katex{font-size:.95em}.steps .katex-display,.hints .katex-display{padding:.5rem .4rem}}   /* a narrow phone: a display calculation 16 px, the text around it stays 17 */   /* maths as large as the text around it (17 px), never smaller */
+.sol-step .katex-display>.katex,.hints .katex-display>.katex,details.answer .katex-display>.katex{text-align:left}   /* a calculation reads from the left, like the text around it */
+p.sol-answer{display:inline-block;margin:.1rem 0 .5rem;padding:.35rem .9rem;background:var(--surface);border:2px solid var(--accent);border-radius:var(--inner-radius);font-size:1.0625em}
+.sol-step[data-step=järkevyys]{margin-top:.4rem;padding:.7rem .9rem;border:0;border-left:3px solid var(--fig-sand);background:color-mix(in srgb,var(--fig-sand-light) 35%,var(--surface));border-radius:0 var(--inner-radius) var(--inner-radius) 0}
+@media (max-width:600px){details.solution .steps{padding:.7rem .75rem}details.solution .steps .katex-display{padding:.6rem .5rem}details.opt{padding:0 .8rem}details.opt>.activity{margin:.8rem 0 1rem}}
+
+/* simulation card */
+#sim{font-size:var(--sim-fs);line-height:var(--sim-lh);background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius);padding:.2rem 1rem 1rem;margin:2.4rem 0}
+#sim>h2{margin-top:1rem}
+#sim>h3{margin:.9rem 0 .6rem;font:700 var(--fs-small)/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}   /* a label, not a heading that competes with the task's */
+.sim-context{margin:-.3rem 0 .6rem;font-size:var(--fs-small);color:var(--ink-2)}.sim-context:empty{display:none}
+.sim-context strong{color:var(--ink)}
+#sim-root{position:relative}#sim-root canvas{max-width:100%;height:auto!important;display:block;border-radius:10px}
+.sim-canvas{position:relative;margin-inline:auto}.sim-tex-layer{position:absolute;inset:0;pointer-events:none;overflow:visible}.sim-tex{position:absolute;white-space:nowrap;line-height:1.15}.sim-tex .katex{font-size:1em}#sim-root .readout .katex,#sim-root label .katex{font-size:1.05em}
+#sim-root .readout{font-size:var(--fs-ui);line-height:1.5;margin:.6rem 0;font-variant-numeric:tabular-nums}
+#sim-root .note{font-size:var(--fs-small);color:var(--ink-2);margin:.5rem 0 0}
+#sim-root .controls{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.5rem 1.5rem;margin:.5rem 0}
+#sim-root label{display:flex;flex-direction:column;flex:1 1 11rem;min-width:0;font-size:var(--fs-ui)}
+#sim-root label>span{white-space:normal!important}#sim-root label>span .katex{white-space:nowrap}   /* a slider label wraps between its words (over a sim.js nowrap), never inside its formula, so the value stays with its symbol (en fy3-6/fy3-14 overflowed the sim panel at 1280, 2026-11-03) */
+#sim-root label:has(select){flex:1 1 auto}   /* a drop-down at its longest option's width where the row has room: English options were cut off at 1280 (visual audit 2026-11-01) */
+#sim-root input[type=range]{width:100%;min-height:40px;margin:0;accent-color:var(--accent)}
+#sim-root button{font:600 var(--fs-ui) var(--sans);min-height:40px;padding:0 1.4rem;border:1px solid var(--accent-deep);border-radius:999px;background:var(--accent-deep);color:#fff;cursor:pointer}
+#sim-root button:hover{background:var(--accent)}
+#sim-root select{max-width:100%;min-height:40px;font:inherit;font-size:var(--fs-ui);padding:0 .6rem;border:1px solid #767676;border-radius:.4rem;background:#fff;color:var(--ink)}
+#sim-root label.locked{opacity:.6}#sim-root label.locked::after{content:" (vakio)";font-size:.85em}html[lang=en] #sim-root label.locked::after{content:" (fixed)"}   /* a locked control in an experiment, in the page's language (visual audit 2026-10-31) */
+.sim-info{margin:.6rem 0 0;border-top:1px solid var(--line-2)}
+details.sim-box,#sim-root details.note{margin:0;border-bottom:1px solid var(--line-2)}
+details.sim-box>div{font-size:var(--fs-ui);padding:0 0 .6rem 1.2rem}details.sim-box>div>:first-child{margin-top:.2rem}
+
+footer.bottom{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);font-size:var(--fs-small);color:var(--ink-2);display:flex;flex-wrap:wrap;align-items:center;gap:.2rem 1.2rem}
+footer.bottom a{display:inline-flex;align-items:center;min-height:44px}
+.crumbs:empty{display:none}
+
+/* tables: a level-3 element, light frame, small sans heads; numbers in tabular figures */
+table{display:block;position:relative;width:fit-content;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;border:1px solid var(--line);border-radius:12px;font-variant-numeric:tabular-nums;
+  /* scroll cue: a soft shadow at an edge that has more columns behind it (covers move with the content) */
+  background:linear-gradient(to right,var(--surface) 30%,transparent) left/2.5rem 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,transparent) right/2.5rem 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.2),transparent) left/.9rem 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.2),transparent) right/.9rem 100% no-repeat scroll,var(--surface)}
+th,td{padding:.45rem .8rem;text-align:left;border-bottom:1px solid var(--line-2);white-space:nowrap}
+th{font:600 var(--fs-small) var(--sans);color:var(--ink-2);background:var(--bg-tint)}
+tr:last-child td{border-bottom:0}
+table thead,table tbody{display:table;width:100%}
+/* teacher 2026-10-28: every column visible on a phone. Below 48rem the cells wrap their words (Finnish hyphenation)
+   and pad less; a number with its unit stays on one line (KaTeX, nbsp). */
+@media (max-width:48rem){th,td{white-space:normal;hyphens:auto;-webkit-hyphens:auto;padding:.4rem .5rem}}
+
+/* stage navigation = the progress bar (teacher 2026-11-03): a bar of chips that sticks under the top edge at every width;
+   on a narrow window it scrolls sideways inside itself (never the page). Each stage shows its number, so the nav and the
+   stage headings read as one sequence; the stage on screen is marked (lesson.js sets aria-current) and a stage whose
+   answers are all given shows a tick (a.is-done). The Kuuntele button (readaloud.js, .toc-tools) sits at its right end. */
+nav.toc{position:sticky;top:0;z-index:5;display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none;margin:0 -16px 1rem;padding:.4rem 16px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.toc::-webkit-scrollbar{display:none}
+nav.toc .toc-head{display:none}
+nav.toc a{flex:none;display:inline-flex;align-items:center;gap:.45rem;min-height:40px;padding:0 .9rem 0 .55rem;border-radius:999px;font-size:var(--fs-small);font-weight:600;color:var(--ink-2);text-decoration:none;border:1px solid transparent}
+nav.toc a:not(:has(.toc-no)){padding-left:.9rem}
+nav.toc .toc-no{display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:.75rem;font-weight:700;color:var(--ink-2)}
+nav.toc .toc-rest{display:none}
+@media (min-width:80rem){nav.toc .toc-rest{display:inline}}   /* a wide bar has room for "Tarkista osaamisesi" */
+nav.toc a:hover{background:var(--bg-tint);color:var(--ink)}
+nav.toc a[aria-current]{background:var(--accent-deep);color:#fff}
+nav.toc a[aria-current] .toc-no{background:#fff;border-color:#fff;color:var(--accent-deep)}
+nav.toc a.is-done .toc-no{font-size:0;background:var(--accent);border-color:var(--accent)}
+nav.toc a.is-done .toc-no::after{content:"";width:.7rem;height:.38rem;margin-top:-.15rem;border:solid #fff;border-width:0 0 2.5px 2.5px;transform:rotate(-45deg)}
+nav.toc a.is-done[aria-current] .toc-no{background:#fff;border-color:#fff}nav.toc a.is-done[aria-current] .toc-no::after{border-color:var(--accent-deep)}
+nav.toc a.is-done:not(:has(.toc-no)) .toc-label::before{content:"\2713\00a0";font-weight:700}
+nav.toc .toc-tools{position:sticky;right:0;flex:none;display:flex;align-items:center;gap:.25rem;margin-left:auto;padding-left:.5rem;background:var(--bg);box-shadow:-.6rem 0 .6rem -.2rem var(--bg)}
+nav.toc .toc-tools[hidden]{display:none}
+@media (max-width:1099.98px){nav.toc .toc-tools{right:-16px;margin-right:-16px;padding-right:16px}}   /* covers the bar's own side padding too, so no chip shows beside it */
+@media (min-width:1100px){nav.toc{margin-inline:0;padding-inline:0}}
+article h2,article h3,.stage,.activity{scroll-margin-top:var(--sticky-top)}#sim,#exercises,#exit{scroll-margin-top:var(--sticky-top)}
+
+/* answer check: browser-side only, nothing is stored or sent */
+p.howto{font-size:var(--fs-small);color:var(--ink-2);margin:0 0 .8rem}
+li p.task{margin:.3rem 0 .4rem}
+form.check{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.4rem 0}
+form.check input{width:7.5rem;min-height:40px;font:inherit;font-size:1rem;padding:0 .7rem;border:1px solid #767676;border-radius:10px;background:var(--surface);color:var(--ink);font-variant-numeric:tabular-nums}
+form.check input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+form.check input[aria-invalid=true]{border-color:#b4532a}
+form.check .unit{font-size:var(--fs-body);color:var(--ink-2)}
+form.check button,.choice-actions button,.exp-controls button,.show-model,.worked .step-controls button{font:600 var(--fs-ui) var(--sans);min-height:40px;padding:0 1rem;border:1px solid var(--accent-deep);border-radius:999px;background:var(--accent-deep);color:#fff;cursor:pointer}
+form.check button:hover,.choice-actions button:hover,.exp-controls button:hover,.worked .step-controls button.next-step:hover{background:var(--accent)}
+form.check output{flex:1 1 100%;font-size:var(--fs-ui);min-height:1.3em}
+form.check output[data-state=ok]{color:var(--accent-deep);font-weight:600}
+form.check output[data-state=no]{color:#8a3b1a}
+form.check output[data-state=hint]{color:var(--ink-2)}
+form.check.is-ok input{border-color:var(--accent);background:var(--accent-soft)}
+/* the exercise head (lesson.js 5b): the Ydintehtävä tag, Vastaus and Näytä ratkaisu on one row; the boxes open in place */
+.ex-head{display:flex;flex-wrap:wrap;align-items:center;gap:.1rem 1rem;margin:0 0 .2rem}.ex-head .ex-core{margin:0}
+.ex-toggle{display:inline-flex;align-items:center;min-height:40px;padding:0 .2rem 0 0;border:0;background:none;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);cursor:pointer}
+.ex-toggle::before{content:"▸";display:inline-block;width:1.2em;flex:none}.ex-toggle[aria-expanded=true]::before{content:"▾"}
+.ex-toggle:hover{text-decoration:underline;text-underline-offset:.18em}
+li.ex-js>details.answer>summary,li.ex-js>details.solution>summary{display:none}
+li.ex-js>details.answer:not([open]),li.ex-js>details.solution:not([open]){margin:0}
+@media print{.ex-head .ex-toggle{display:none}}
+/* try first (teacher 2026-11-03, lesson.js part 8, inquiry.js): a locked control stays in view, dimmed, with its reason */
+.ex-toggle:disabled{color:var(--ink-2);opacity:.7;cursor:not-allowed;text-decoration:none}
+.lock-note{display:inline-block;font:400 var(--fs-small) var(--sans);color:var(--ink-2)}
+.lock-note::before{content:"🔒\FE0E  ";font-size:.85em}
+summary .lock-note{margin-left:.6rem}
+details[data-locked]>summary{cursor:not-allowed;color:var(--ink-2)}
+.show-model[aria-disabled=true]{opacity:.6;cursor:not-allowed}.choice-actions .lock-note{align-self:center}
+label.solved,.explain .drew{display:flex;gap:.6rem;align-items:flex-start;min-height:44px;padding:.5rem 0;cursor:pointer;font-size:var(--fs-inner)}
+label.solved input{margin:.25rem 0 0;width:1.15rem;height:1.15rem;flex:none;accent-color:var(--accent)}
+fieldset.choice .feedback.is-answer,fieldset.choice[data-state] .feedback.is-answer{border-color:var(--accent);background:var(--accent-soft)}
+fieldset.choice li.is-answer>label{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+form.check output[data-state=close]{color:#7a5a00;font-weight:600}form.check output[data-state=close]::before{content:"≈ ";font-weight:700}
+.teacher-note{margin:.6rem 0;padding:.5rem .9rem;border-radius:8px;background:#fff6d6;border:1px solid #e6cf7a;font:600 var(--fs-ui) var(--sans)}
+@media print{.lock-note,label.solved,.teacher-note{display:none}}
+/* the solution editor under an exercise (lesson.js 6; Abitti's own editor, loaded on the first click) */
+.pad-open,.pad-copy,.pad-btn{font:600 var(--fs-ui) var(--sans);min-height:40px;padding:0 1rem;border:1px solid var(--accent-deep);border-radius:999px;background:var(--surface);color:var(--accent-deep);cursor:pointer;margin:.1rem 0 .5rem}
+.pad-open:hover,.pad-copy:hover,.pad-btn:hover{background:var(--accent-soft)}
+.pad-open[aria-expanded=true]{background:var(--accent-soft)}
+.pad{margin:0 0 .8rem}
+.pad .rich-text-editor{min-height:7.5rem;padding:.6rem .75rem;background:var(--surface);border:1px solid #767676;border-radius:var(--inner-radius);font-size:var(--fs-inner);line-height:1.6;color:var(--ink);font-family:var(--sans);overflow-wrap:anywhere;scroll-margin-top:9rem}
+.pad .rich-text-editor:focus{outline:2px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+.pad .rich-text-editor img{max-width:100%;vertical-align:middle}
+.pad .rich-text-editor-toolbar-root>div{max-width:100vw;overflow-x:auto;overscroll-behavior-x:contain}   /* Abitti's toolbar is fixed to the top of the window; on a phone it scrolls sideways */
+.pad-tools{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .8rem;margin-top:.5rem}.pad-tools .pad-copy,.pad-tools .pad-btn{margin:0}
+.pad-status{margin:0;font-size:var(--fs-ui);min-height:1.3em;color:var(--ink-2)}.pad-status[data-state=ok]{color:var(--accent-deep);font-weight:600}.pad-status[data-state=no]{color:#8a3b1a}
+.pad-note{margin:.3rem 0 0;font-size:var(--fs-ui);color:var(--ink-2)}
+.pad-save{margin:.3rem 0 0;font-size:var(--fs-ui);min-height:1.3em;color:var(--ink-2)}.pad-save[data-state=ok]{color:var(--accent-deep)}.pad-save[data-state=no]{color:#8a3b1a;font-weight:600}
+.pad-saved{margin:.4rem 0 0}.pad-saved>summary{font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}.pad-saved .pad-tools{margin-top:.3rem}
+@media print{.pad-open,.pad-tools,.pad-note,.pad-save,.pad-saved,.pad .rich-text-editor-toolbar-root{display:none!important}}
+
+/* print: the lesson as a handout. lesson.js opens every collapsed block while printing. */
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top,nav.crumbs,nav.toc,footer.bottom,#sim,form.check,p.howto{display:none!important}
+  .page{width:auto;padding:0;display:block}main.reading{max-width:none}
+  details>summary::before{content:""}details>summary{font-weight:600}
+  details.level{border:0;padding:0;break-inside:avoid}li{break-inside:avoid}
+  .katex-display{border:0;background:none}a{color:inherit;text-decoration:none}
+  h2{break-after:avoid}
+  .fig,article svg{break-inside:avoid}article svg{border:0;padding:0}
+  .activity.task-card{border:1px solid #ccc;box-shadow:none}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}html{scroll-behavior:auto}}
+
+/* worked example in stages (build.py staged_example, lesson.js): the problem in a framed box, the solution as numbered
+   steps on a rule under it, in the reading column at every width (teacher 2026-11-03) */
+.example{margin:.8rem 0 1.2rem}
+.example-task{padding:1rem 1.2rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius)}
+.example-task>:last-child{margin-bottom:0}
+.example-label{margin:0 0 .3rem;font:700 var(--fs-small) var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}
+.worked{margin:.8rem 0 1rem}
+.worked .step{border-left:3px solid var(--accent-soft);padding:.1rem 0 .1rem 1rem;margin:.7rem 0}
+.worked .step:focus{outline:none}
+.worked .eq-chain{width:auto;margin:.5rem 0 .7rem}.worked .eq-chain:not(.lead){grid-template-columns:fit-content(min(55vw,24rem)) minmax(0,max-content);justify-content:center}   /* a calculation in rows as wide as the step's display formulas, centred like them (a long left side on its own line stays at the left) */
+.worked .step-label{margin:0 0 .2rem;font:700 var(--fs-small) var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep)}
+.worked .step-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0 0}
+.worked .step-controls button{background:var(--surface);color:var(--accent-deep)}
+.worked .step-controls button.next-step{background:var(--accent-deep);color:var(--surface)}
+.worked .step-controls button[hidden]{display:none}
+.worked:not(.js) .step-controls{display:none}
+@media print{.worked .step-controls{display:none}}
+
+/* ---- inquiry lesson (scripts/inquiry.py, inquiry.js) ---- */
+
+/* the opening (inquiry.py intro_html): the title and the Miksi question across the reading column; under them the
+   chapter illustration and the lesson's key facts side by side, both from the same height; one column on a phone */
+.intro-head{max-width:var(--measure)}.intro-head blockquote{margin:0 0 1.5rem}
+.intro-row{display:flex;flex-direction:column;gap:1.25rem}
+.intro-media>p{margin:0}.intro-media svg.fig-hero{margin:0}
+.intro-aside{padding:1.1rem 1.25rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius);line-height:1.55}
+.intro-aside>:last-child,.learn>:last-child{margin-bottom:0}
+h2.intro-h{margin:0 0 .45rem;font:700 var(--fs-small)/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep)}
+.learn ul,.prior ul{margin:0;padding-left:1.2rem}.learn li,.prior li{margin:.35rem 0}
+.learn li::marker{color:var(--accent)}
+.intro-more{max-width:var(--measure);margin:1.5rem 0 0;font-size:var(--fs-inner);line-height:1.55}
+.prior{margin:0 0 .9rem}
+.prior-ref{display:block;font-size:var(--fs-small);color:var(--ink-2)}
+.path-note{max-width:var(--measure);margin:0;font-size:var(--fs-small);color:var(--ink-2);line-height:1.5}
+/* Luvun tärkeät käsitteet (Selkeä suomi, inquiry.py key_concepts_html; teacher 2026-11-03): one quiet panel in the
+   reading column between the opening and the first stage; each concept is its term, a short explanation and the
+   student's own note field, one under another on a phone, the note field beside its explanation from 40rem. */
+.kc{max-width:var(--measure);margin:2rem 0 0;padding:1rem 1.1rem 1.1rem;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.kc-h{display:flex;flex-wrap:wrap;align-items:center;gap:.3rem .6rem;margin:0 0 .4rem}.kc-h .opt-tag{margin:0}
+.kc-lead{margin:0 0 .8rem;font-size:var(--fs-inner);line-height:1.55}
+.kc-list{margin:0;padding:0}
+.kc-term{margin:0;padding:.75rem 0 0;border-top:1px solid var(--line-2);font-size:var(--fs-inner);font-weight:700}
+.kc-explain{margin:.15rem 0 .75rem;font-size:var(--fs-inner);line-height:1.5}
+@media (min-width:40rem){.kc-list{display:grid;grid-template-columns:minmax(9rem,14rem) minmax(0,1fr);column-gap:1.2rem}
+  .kc-term,.kc-explain{border-top:1px solid var(--line-2);padding:.75rem 0;margin:0}}
+.path-count{white-space:nowrap}
+
+/* level 1: the stage. A numbered heading on a full-width rule, with clear room above, so the start of each stage
+   shows while skimming */
+.stage{margin:var(--stage-space) 0 0}
+.stage>h2{display:flex;align-items:center;gap:.7rem;margin:0 0 1.25rem;padding-top:1.1rem;border-top:2px solid var(--ink)}
+.stage-no{display:inline-grid;place-items:center;flex:none;width:2rem;height:2rem;border-radius:50%;background:var(--accent-deep);color:#fff;font:700 .95rem var(--sans)}
+.stage-practice>h2{border-top-color:var(--accent-deep)}
+
+/* level 2: the task. One card holds the heading, instructions, controls, table, answers and feedback. Reading
+   (the opening story, theory, a text) is not a card. */
+.activity{margin:0 0 1.25rem}
+.task-card{max-width:calc(var(--measure) + 3rem);background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius);padding:var(--card-pad)}
+.task-card>h3:first-child{margin-top:0}
+.task-card>:last-child,.task-card>:last-child>:last-child{margin-bottom:0}
+.activity.is-active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}   /* the experiment that drives the simulation now */
+.act-theory>h3.theory-h:first-child{margin-top:0}
+.act-theory h3.theory-h{margin-top:2.2rem}
+.act-theory h4{font:700 var(--fs-body)/1.35 var(--sans);margin:1.6rem 0 .4rem;color:var(--ink)}   /* a subheading inside a theory section (### in lesson.md) */
+.hook{font:400 1.125rem/1.6 var(--serif)}.hook>:first-child{margin-top:0}
+.question{font:500 1.1875rem/1.45 var(--serif);color:var(--ink);margin:1rem 0 0;padding-left:1rem;border-left:4px solid var(--accent)}
+p.task{margin:.3rem 0 .5rem}
+p.task.scenario{margin-bottom:.6rem}p.task.ask,legend .ask{font-weight:600}   /* a long task: the situation, then the question asked (inquiry.py split_prompt) */
+legend .scenario,legend .ask{display:block}legend .scenario{font-weight:400;margin-bottom:.6rem}
+
+/* choices: the card is the frame, so the fieldset itself is plain */
+fieldset.choice{margin:0;padding:0;border:0;min-width:0}
+fieldset.choice legend{padding:0;font-weight:500;float:left;width:100%;margin-bottom:.8rem}fieldset.choice legend+*{clear:both}
+.solution-text{margin:.3rem 0 .6rem}
+/* each option a whole clickable row with room around it; the chosen one stands out by its frame and weight, not colour alone */
+ul.choices{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}ul.choices li{margin:0}
+ul.choices label{display:flex;gap:.7rem;align-items:flex-start;min-height:44px;padding:.55rem .8rem;border:1px solid var(--line);border-radius:var(--inner-radius);background:var(--surface);cursor:pointer}
+ul.choices label:hover{background:var(--bg-tint)}ul.choices input{margin:.3rem 0 0;flex:none;width:1.15rem;height:1.15rem;accent-color:var(--accent)}
+ul.choices label:has(input:checked){border:2px solid var(--accent);padding:calc(.55rem - 1px) calc(.8rem - 1px);background:var(--accent-soft)}
+ul.choices label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+ul.choices input:disabled+span{color:var(--ink-2)}ul.choices input:checked:disabled+span{color:var(--ink);font-weight:600}
+fieldset.choice.models ul.choices{display:grid;gap:.4rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
+fieldset.choice.models ul.choices li{display:flex;flex-direction:column}fieldset.choice.models ul.choices label{border:1px solid var(--line);border-radius:10px;flex:1 0 auto;box-sizing:border-box}fieldset.choice.models .feedback{margin-left:0}   /* the opened feedback follows its card in the same grid cell, never over the next row (visual audit 2026-10-31, fy1-8) */
+fieldset.choice.figures ul.choices{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+fieldset.choice.figures ul.choices label{height:100%;box-sizing:border-box}fieldset.choice.figures ul.choices label>span{flex:1;min-width:0}
+fieldset.choice.figures .task-fig{margin:.3rem 0 0}
+.explain .drew{display:flex;gap:.6rem;align-items:flex-start;min-height:44px;padding:.5rem 0;cursor:pointer}.explain .drew input{margin:.25rem 0 0;width:1.15rem;height:1.15rem;flex:none;accent-color:var(--accent)}
+.crit-detail{color:var(--ink-2)}
+
+/* level 3: inside a task. Tinted panels, 15–16 px, no heading weight */
+.feedback{margin:.4rem 0 .2rem 1.6rem;padding:.55rem .9rem;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:var(--fs-inner)}
+.feedback>:first-child{margin-top:0}.feedback>:last-child{margin-bottom:0}
+fieldset.choice[data-state=no] .feedback{border-color:#b4532a;background:#fbf1ea}
+.choice-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0 0}
+.exp-controls button:disabled{opacity:.5;cursor:not-allowed}
+fieldset.choice output{display:block;margin-top:.4rem;font-size:var(--fs-ui);min-height:1.3em}
+fieldset.choice output[data-state=ok]{color:var(--accent-deep);font-weight:600}fieldset.choice output[data-state=no]{color:#8a3b1a;font-weight:600}fieldset.choice output[data-state=hint]{color:var(--ink-2)}
+fieldset.choice output[data-state=ok]::before,form.check output[data-state=ok]::before{content:"✓ ";font-weight:700}
+fieldset.choice output[data-state=no]::before,form.check output[data-state=no]::before{content:"✗ ";font-weight:700}   /* right and wrong by a sign too, never by colour alone */
+.pending{margin:.5rem 0 0;font-size:var(--fs-ui);color:var(--ink-2)}
+.sim-moved{margin:.5rem 0;font-size:var(--fs-ui);color:var(--ink-2);font-style:italic}
+.justify{display:block;margin:.6rem 0 0;font-size:var(--fs-small);color:var(--ink-2)}
+textarea{display:block;width:100%;box-sizing:border-box;margin-top:.3rem;font:inherit;font-size:var(--fs-inner);padding:.5rem .7rem;border:1px solid #767676;border-radius:10px;background:var(--surface);color:var(--ink)}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-color:var(--accent)}
+.experiment>.intro>:first-child{margin-top:0}
+.exp-setup{font-size:var(--fs-ui);margin:.6rem 0;padding:.5rem .8rem;background:var(--bg);border-radius:var(--inner-radius)}
+.exp-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+.exp-controls .exp-reset,.exp-controls .exp-copy,.choice-actions .copy-notes{background:var(--surface);color:var(--accent-deep)}
+.exp-controls .exp-reset:hover:not(:disabled),.exp-controls .exp-copy:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-deep)}
+.exp-export-status{align-self:center;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+.exp-export-text{display:block;width:100%;box-sizing:border-box;margin:.3rem 0 .7rem;font:15px/1.4 var(--mono);white-space:pre;overflow:auto}
+table.exp-table{margin:.6rem 0 .3rem}table.exp-table caption{font:600 var(--fs-small) var(--sans);color:var(--ink-2);text-align:left;padding:.3rem .8rem .1rem;white-space:nowrap}
+table.exp-table tbody:empty::after{content:"";display:block;height:.3rem}
+.exp-status,.explain-status{font-size:var(--fs-ui);color:var(--ink-2);margin:.3rem 0 0;min-height:1.3em}
+.exp-question{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line-2)}
+.hints{margin:.4rem 0 .2rem}.hints details{margin:.2rem 0}
+.hints details>div{margin:.2rem 0 .5rem 1.2rem;padding:.55rem .9rem;background:var(--bg-tint);border-radius:8px;font-size:var(--fs-inner)}
+.explain .model{margin-top:.8rem;padding:.7rem 1rem;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--inner-radius) var(--inner-radius) 0}
+.explain .model h4{margin:.3rem 0 .3rem;font:700 var(--fs-small) var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep)}
+.explain .model h4:focus{outline:none}
+ul.criteria{list-style:none;margin:0;padding:0}.crit-lead{margin:0 0 .4rem;color:var(--ink-2);font-size:var(--fs-inner)}
+.crit-result{margin:.6rem 0 0;padding:.6rem .9rem;background:var(--bg-tint);border-radius:8px;font-size:var(--fs-inner)}.crit-result p{margin:.2rem 0}.crit-missing{margin:.3rem 0 .4rem;padding-left:1.2rem}
+ul.criteria label{display:flex;gap:.6rem;align-items:flex-start;min-height:36px;padding:.2rem .3rem}ul.criteria input{margin-top:.35rem;accent-color:var(--accent)}
+.pair{font-size:var(--fs-ui);color:var(--ink-2)}
+.my-predictions{margin:.3rem 0;padding-left:1.2rem}.my-predictions .rq{margin:.2rem 0 0;font-size:var(--fs-small);color:var(--ink-2)}.my-predictions p{margin:.1rem 0 .4rem}
+.revise label{margin-right:.8rem;min-height:40px;display:inline-flex;align-items:center;gap:.3rem}
+.inquiry #sim{margin:1rem 0}
+#exit>h3:first-child{margin-top:0}
+#exit>ol>li{margin:0 0 1rem}
+
+/* optional activities (inquiry.json "optional": true): a closed, named box off the core path; inside it the task needs
+   no second frame */
+details.opt{max-width:calc(var(--measure) + 3rem);margin:0 0 1.25rem;border:1px dashed #cfc6b2;border-radius:var(--card-radius);padding:0 1rem;background:transparent}
+details.opt>summary{min-height:48px;gap:.2rem;font:600 var(--fs-ui) var(--sans);color:var(--ink-2)}
+details.opt[open]{background:var(--surface);border-style:solid;border-color:var(--line)}
+details.opt[open]>summary{border-bottom:1px solid var(--line-2)}details.opt>.activity{margin:.9rem .5rem 1.1rem}
+.opt-tag{display:inline-block;font:700 .72rem var(--sans);letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);border:1px solid var(--accent-deep);border-radius:999px;padding:.05rem .5rem;margin-right:.4rem}
+p.source{display:inline-block;margin:.2rem 0 .5rem;padding:.2rem .7rem;border-radius:999px;font-size:var(--fs-small);background:var(--bg-tint);border:1px solid var(--line)}
+p.source[data-source=measured]{border-color:var(--accent-deep)}
+@media print{.choice-actions,.exp-controls,.exp-export-text,.pending,.exp-status,.explain-status,.sim-context{display:none!important}}
+
+/* the Ennusta box: closed at first; open, it frames the predictions as one group */
+details.fold{max-width:calc(var(--measure) + 5rem);margin:0;border:1px solid var(--line);border-radius:var(--card-radius);background:color-mix(in srgb,var(--accent-soft) 55%,var(--bg));padding:0 1.1rem}
+details.fold>summary{min-height:56px;gap:.2rem .7rem;flex-wrap:wrap;font:700 var(--fs-body) var(--sans);color:var(--accent-deep)}
+details.fold>summary .fold-status{font:400 var(--fs-small) var(--sans);color:var(--ink-2)}
+details.fold[open]>summary{border-bottom:1px solid var(--line);margin-bottom:1.1rem}
+details.fold[open]{padding-bottom:.1rem}
+@media print{.fold-status{display:none}}
+
+/* exercises: each level a box, each exercise a numbered item on a rule */
+details.level{max-width:calc(var(--measure) + 3rem);background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius);padding:0 1.2rem;margin:0 0 .8rem}
+details.level>summary{min-height:52px;font:700 var(--fs-h3) var(--sans)}
+details.level>summary .count{margin-left:.6rem}
+details.level[open]>summary{border-bottom:1px solid var(--line-2)}
+details.level>ol{margin:0;padding:0 0 .6rem;list-style:none}
+details.level>ol>li{margin:0;padding:.8rem 0;border-bottom:1px solid var(--line-2)}
+details.level>ol>li:last-child{border-bottom:0}
+/* The exercise's running number "6-3" (chapter-exercise, teacher 2026-11-04, build.py number_label): first in the
+   exercise, in place of the list marker that restarted at every level; lesson.js moves it into the head row. */
+.ex-num{display:inline-block;margin:0 .6rem .25rem 0;font:700 var(--fs-h3) var(--sans);color:var(--accent-deep);white-space:nowrap;font-variant-numeric:tabular-nums}
+.ex-head .ex-num{margin:0}.practice-task h3 .ex-num{font:inherit;color:var(--accent-deep);margin:0 .35rem 0 0}
+@media (max-width:600px){details.level{padding:0 .8rem}.feedback{margin-left:0}}
+
+/* a figure with the text it explains (build.py fig_rows): text first, its figure under it in the reading column, with
+   room around it; side by side on a wide screen only when the two are about as tall (.fig-row.side) */
+.fig{margin:1.25rem 0 1.75rem}.fig svg{display:block;margin-inline:auto}
+.fig.fbd{margin:.6rem 0 1rem}.fig.fbd svg{max-width:min(100%,24rem)}   /* a drawn force diagram in a solution step (scripts/fbdspec.py) */
+.fig-row{max-width:var(--measure);margin:0 0 .5rem}
+.fig-row.stack .fig svg{max-width:min(100%,32rem)}
+.fig-row .fig-text>:first-child{margin-top:0}.fig-row .fig-text>:last-child{margin-bottom:0}
+
+/* ---- wide content (main at least 60rem): a text track and a margin track ----
+   inquiry.js reads --wide on .lab to know that the simulation sits beside the experiments. */
+@container content (min-width:60rem){
+  /* text and tasks in one reading column, whatever the width */
+  .stage>*:not(.lab,.act-theory,.act-sim),.act-theory>*:not(.fig-row),.lab-main>*,article#teoria:not(.inquiry)>:not(.fig-row,#sim){max-width:calc(var(--measure) + 3rem)}
+  .act-theory>p,.act-theory>ul,.act-theory>ol,.act-theory>h3,.act-theory>h4,.act-theory>blockquote{max-width:var(--measure)}
+  .stage>.act-sim{max-width:40rem}
+  /* the opening: the illustration (its size set by what it shows, not by the column) beside the key facts, from the same height */
+  .intro-row{display:grid;grid-template-columns:minmax(0,36rem) minmax(17rem,24rem);column-gap:var(--gap);align-items:start}
+  .intro-row.no-media{grid-template-columns:minmax(0,var(--measure))}
+  .intro-more{max-width:none}.prior ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(18rem,1fr));column-gap:2.5rem}   /* short fixed items, read row by row */
+  /* Tutki: the experiments in the reading column, the simulation beside them in a column that stays in view (sticky)
+     while the student works through the experiments that use it; a panel taller than the window scrolls inside itself */
+  .stage>.lab{--wide:1;display:grid;grid-template-columns:minmax(min(30rem,50%),1fr) minmax(0,40rem);column-gap:2rem;align-items:start}   /* half and half on a small laptop; from 1280 px the 600 px canvas keeps its native size */
+  .lab-main{grid-column:1;grid-row:1;min-width:0}
+  .lab-side{grid-column:2;grid-row:1;min-width:0;position:sticky;top:var(--sticky-top);max-height:calc(100vh - var(--sticky-top) - .75rem);overflow-y:auto;overscroll-behavior:auto;scrollbar-width:thin;border-radius:var(--card-radius)}
+  .lab-side>.activity{margin:0}
+  .lab-side .act-sim>p{margin:0 0 .6rem;font-size:var(--fs-ui);color:var(--ink-2)}
+  .lab-side #sim,.inquiry .lab-side #sim{margin:0;padding:.1rem 1rem .8rem}
+  .lab-side .sim-canvas{max-width:calc((100vh - var(--sticky-top) - 25rem) * var(--sim-ar,1.5));min-width:min(100%,24rem)}   /* on a short laptop screen the picture shrinks so the controls stay in view */
+}
+@container content (min-width:62.5rem){
+  /* a figure beside the paragraph it explains, when the two are about as tall (build.py fig_side); the text after the
+     unit runs on in the reading column */
+  .fig-row.side{display:grid;grid-template-columns:minmax(0,var(--measure)) minmax(0,26rem);column-gap:var(--gap);align-items:center;max-width:none;margin:0 0 1.25rem}
+  .fig-row.side>.fig{margin:0}
+  .fig-row.side>.fig-text>:last-child{margin-bottom:0}
+}
+
+/* (2026-11-03, the progress bar brief: the stage bar stays at the top at every width; the side column of wide windows was retired) */
+.nobr{white-space:nowrap}.math-glue{white-space:nowrap}   /* lesson.html flGlueMath: a short formula and the punctuation beside it */
+.katex .katex-mathml{width:1px;height:1px;overflow:hidden}   /* the screen-reader copy of a formula is clipped but would still widen its scroll box */
+
+/* Self-assessment (teacher's brief 2026-10-28, scripts/practice.py): the Sovella itsenäisesti page with its shared
+   rubric (the chapter-level Arvioi osaamistasi was removed the same day). It uses the existing levels: task cards,
+   tinted panels inside them; the point buttons are whole 44 px targets. */
+fieldset.crit{margin:0;padding:0;border:0;min-width:0}
+.crit-points label{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 .9rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);font:500 var(--fs-ui) var(--sans);cursor:pointer}
+.crit-points label:has(input:checked){border-color:var(--accent-deep);background:var(--accent-soft);color:var(--accent-deep);font-weight:700}
+.crit-points input{accent-color:var(--accent);margin:0}
+
+.practice-head{margin:0 0 2rem;max-width:var(--measure)}.practice-head h1{margin:.2rem 0 .8rem}
+.practice-task>h2 .pts{margin-left:auto;font:600 var(--fs-ui) var(--sans);color:var(--ink-2);white-space:nowrap}
+.practice-task .situation table{margin:.6rem 0 1rem}.practice-task .situation blockquote{margin:.8rem 0;padding:.6rem 1rem;border-left:3px solid var(--line);background:var(--bg);border-radius:0 8px 8px 0;font-size:var(--fs-inner)}
+ol.parts{list-style:none;margin:1rem 0;padding:0;border-top:1px solid var(--line-2)}
+ol.parts>li{display:grid;grid-template-columns:1.8rem 1fr auto;gap:.2rem .5rem;padding:.6rem 0;border-bottom:1px solid var(--line-2)}
+.part-id{font-weight:700}.pts{font:600 var(--fs-small) var(--sans);color:var(--ink-2);white-space:nowrap}
+details.reveal{margin:1rem 0 0;border-top:1px solid var(--line)}
+details.reveal>summary{min-height:52px;flex-wrap:wrap;gap:.1rem .6rem;font:700 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+.reveal-hint{font:400 var(--fs-small) var(--sans);color:var(--ink-2)}
+.reveal-body>h3{margin:1.4rem 0 .6rem}.reveal-body>h3:first-child{margin-top:.6rem}
+h4.sol-part{margin:1rem 0 .4rem;font:700 var(--fs-body) var(--sans)}
+.reveal-body .steps{padding:.9rem 1.1rem;background:var(--bg);border:1px solid var(--line-2);border-radius:var(--inner-radius);font-size:var(--fs-inner);line-height:1.6}
+.reveal-body .steps p{margin:0 0 .5rem}.reveal-body .steps strong{color:var(--accent-deep)}.reveal-body .steps svg{display:block;margin:.6rem auto}
+.reveal-body .steps .katex svg{margin:0}   /* KaTeX draws \sqrt as a 400em-wide svg clipped by .hide-tail: the figure margin above pushed the surd out of its box (FY7 Sovella visual review 2026-11-04) */
+.rubric{font-size:var(--fs-inner)}.rubric-lead{color:var(--ink-2)}
+.rubric-part{margin:0 0 1rem;padding:.7rem .9rem;background:var(--bg);border:1px solid var(--line-2);border-radius:var(--inner-radius)}
+.rubric-part-h{display:flex;justify-content:space-between;margin:0 0 .4rem;font-weight:700}
+fieldset.crit{padding:.5rem 0;border-top:1px solid var(--line-2)}.rubric-part-h+fieldset.crit,.rubric-part>fieldset.crit:first-child{border-top:0}
+fieldset.crit legend{float:left;width:100%;padding:0;margin-bottom:.4rem}fieldset.crit legend+*{clear:both}
+fieldset.crit legend .pts{margin-left:.3rem}.crit-detail{display:block;color:var(--ink-2);margin-top:.15rem}
+.crit-points{display:flex;flex-wrap:wrap;gap:.4rem}.crit-points label{min-width:44px;justify-content:center;padding:0 .7rem}
+.rubric-total{margin:.6rem 0 .3rem;font:700 var(--fs-body) var(--sans);color:var(--accent-deep)}
+.rubric-note{margin:0 0 .6rem;font-size:var(--fs-small);color:var(--ink-2)}
+.rubric-more{padding:.6rem .9rem;background:var(--accent-soft);border-radius:8px}.rubric-more p{margin:0 0 .3rem;font-weight:600}.rubric-more ul{margin:0;padding-left:1.2rem}
+@media (max-width:600px){ol.parts>li{grid-template-columns:1.6rem 1fr}ol.parts>li .pts{grid-column:2}.reveal-body .steps{padding:.7rem .75rem}.rubric-part{padding:.6rem .6rem}}
+@media print{.crit-points,.rubric-total,.rubric-more{display:none!important}}
+/* Edellinen luku / Seuraava luku (teacher 2026-10-29, build.py chapter_nav): two large targets at the end of a
+   lesson, side by side when there is room, stacked on a phone; the chapter's name says where a link goes. */
+nav.chapter-nav{max-width:calc(var(--measure) + 3rem);display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:3rem 0 1rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+nav.chapter-nav a{display:flex;flex-direction:column;gap:.2rem;min-height:44px;padding:.75rem 1rem;border:1px solid var(--line);border-radius:var(--card-radius);background:var(--surface);color:var(--ink);text-decoration:none;font-size:var(--fs-small);line-height:1.35;overflow-wrap:anywhere}
+nav.chapter-nav a.next{text-align:right;grid-column:2}
+nav.chapter-nav .dir{font-weight:700;color:var(--accent-deep)}
+nav.chapter-nav .name{font-size:var(--fs-inner, 1rem);color:var(--ink)}
+nav.chapter-nav a:hover{border-color:var(--accent);background:var(--accent-soft)}
+nav.chapter-nav a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:40rem){nav.chapter-nav{grid-template-columns:1fr}nav.chapter-nav a.next{grid-column:1;text-align:left}}
+nav.chapter-nav a.prev .dir::before{content:"← "}nav.chapter-nav a.next .dir::after{content:" →"}
+/* after a wrong answer in Tarkista osaamisesi: where to practise, as a suggestion (inquiry.py, teacher 2026-10-29) */
+.practice-hint{display:none;margin:.6rem 0 0;padding:.55rem .8rem;border-radius:var(--inner-radius);background:var(--bg-tint);font-size:var(--fs-inner);line-height:1.5}
+fieldset.choice[data-state="no"] .practice-hint,.numeric:has(output[data-state="no"]) .practice-hint{display:block}
+/* the exercise path (teacher 2026-10-29): which exercises are core, extra and challenging, said once and marked */
+.ex-path{max-width:calc(var(--measure) + 3rem);margin:0 0 1rem;font-size:var(--fs-ui);line-height:1.5;color:var(--ink-2)}
+.level-lead{margin:.2rem 0 .6rem;font-size:var(--fs-ui);color:var(--ink-2)}
+.ex-core{display:inline-block;margin:0 .5rem .25rem 0;padding:.05rem .55rem;border-radius:999px;background:var(--accent-soft);border:1px solid var(--accent);color:var(--accent-deep);font-size:.8125rem;font-weight:700;vertical-align:.1em}
+/* Kokeelliset tutkimukset (teacher 2026-10-30, scripts/investigations.py): the lesson page's reading column; the goals
+   and levels, the working-mode choice (radios; guidance blocks of other modes are hidden by investigation.js), the
+   prerequisites by kind with their level, just-in-time help links, guidance blocks as tinted panels, teacher guidance
+   closed at the end. */
+.local-inv .local-why{flex-basis:100%;padding:0 0 .5rem}
+.investigation .inv-learn ul{padding-left:1.3rem}
+.inv-levels{list-style:none;padding:0;margin:.3rem 0}
+.inv-levels-note{font-size:var(--fs-small);color:var(--ink-2);margin:.2rem 0 0}
+fieldset.inv-modes{margin:1.6rem 0 0;padding:.8rem 1rem 1rem;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+fieldset.inv-modes legend{font:700 var(--fs-ui) var(--sans);padding:0 .4rem}
+label.inv-mode{display:flex;gap:.7rem;align-items:flex-start;min-height:44px;padding:.45rem 0;font-size:var(--fs-ui);line-height:1.45;cursor:pointer}
+label.inv-mode input{width:22px;height:22px;margin:.1rem 0 0;flex:none;accent-color:var(--accent-deep)}
+label.inv-mode strong{display:block}
+ul.inv-prereq{list-style:none;padding:0;margin:.4rem 0 1rem;border-top:1px solid var(--line-2)}
+ul.inv-prereq li{margin:0;padding:.5rem 0;border-bottom:1px solid var(--line-2)}
+.inv-level{display:inline-block;font:600 .8125rem/1.6 var(--sans);border:1px solid var(--line);border-radius:999px;padding:0 .55rem;margin-right:.4rem;color:var(--ink-2)}
+.inv-level-essential{border-color:var(--accent-deep);color:var(--accent-deep)}
+.inv-mod{color:var(--ink-2);font-size:var(--fs-ui)}
+.inv-why{display:block;font-size:var(--fs-ui);color:var(--ink-2);margin-top:.15rem}
+.inv-help{display:block;margin:.6rem 0;font-size:var(--fs-ui);font-style:italic;color:var(--ink-2)}
+.inv-help a{font-style:normal;font-weight:600}
+.inv-tuki{margin:1rem 0;padding:.7rem 1rem;border-left:4px solid var(--accent);border-radius:0 10px 10px 0;background:var(--accent-soft)}
+.inv-tuki>p{margin:.3rem 0}
+ul.inv-safety li::marker{color:var(--copper)}
+details.inv-teacher{margin:2.4rem 0 1rem;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 1rem}
+details.inv-teacher>summary{min-height:48px;display:flex;align-items:center;font:700 var(--fs-ui) var(--sans);color:var(--accent-deep);cursor:pointer}
+.unit-credits,.unit-sources,.unit-teacher{max-width:var(--measure)}   /* every course's units (FY9 has no units.css of its own) */
+.investigation table{border-collapse:collapse;max-width:100%;display:block;overflow-x:auto}
+.investigation th,.investigation td{border:1px solid var(--line);padding:.35rem .6rem;min-width:4.5rem}
+.inv-section{scroll-margin-top:var(--sticky-top)}
+/* a licensed photograph (FY14 units 2026-11-01; FY1–FY3 lessons 2026-11-03, assets/pics/<course>/photos.json): never wider than the reading column, at most 22rem tall so a portrait never
+   fills a phone screen, centred in its box (the box keeps the width and height attributes' ratio while it loads);
+   the caption under it, the credit on its own line */
+figure.unit-photo{display:table;width:min(100%,20rem);margin:1.25rem 0 1.5rem}
+figure.unit-photo img{display:block;width:auto;max-width:min(100%,24rem);height:auto;max-height:14rem}
+figure.unit-photo figcaption{display:table-caption;caption-side:bottom;margin-top:.5rem;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2)}
+figure.unit-photo .photo-credit{display:block;margin-top:.2rem;font-size:var(--fs-small)}
+figure.unit-photo.logo img{width:100%;max-width:16rem;max-height:none}
+figure.unit-photo.wide{display:block;width:100%;max-width:var(--measure)}
+figure.unit-photo.wide img{width:100%;max-width:100%;max-height:none}
+figure.unit-photo.wide figcaption{display:block;max-width:var(--measure)}
+/* On a wide screen a photo in the running text sits beside the text column, in the empty space to its right
+   (teacher 2026-11-01); inside a box or on a narrower screen it stays in the column. */
+@media (min-width:80rem){
+  .act-theory>figure.unit-photo:not(.wide):not(:has(+ .fx-wide, + .fig-row.side, + .example, + .fx-map, + .fx-timeline, + * + .fx-wide, + * + .fig-row.side, + * + .example, + * + .fx-map, + * + .fx-timeline, + * + * + .fx-wide, + * + * + .fig-row.side, + * + * + .example, + * + * + .fx-map, + * + * + .fx-timeline)){float:right;clear:right;margin:.35rem calc(100% - var(--measure) - 4.5rem - 20rem) 1rem 0}
+  details .activity.act-theory>figure.unit-photo.unit-photo{float:none;margin:1.25rem 0 1.5rem}
+  .act-theory>.fx-wide,.act-theory>.fig-row.side,.act-theory>.example,.act-theory>.fx-map,.act-theory>.fx-timeline,.act-sim,section.stage,.unit-credits{clear:right}
+}
+/* the photographs' credits at the end of the page */
+.unit-credits{max-width:var(--measure);margin-top:var(--stage-space);border-top:1px solid var(--line);padding-top:1.25rem;font-size:var(--fs-inner)}
+.unit-credits ul{padding-left:1.2rem}
+
+/* Lukuvinkit (teacher 2026-11-03, scripts/reading_tips.py): one numbered list of books in the reading column, no
+   subheadings inside it, no covers. Each book: its title as the link, the author, the small loan tag for the books the
+   teacher lends, a short description and three facts (language, level, courses) as a quiet row that wraps on a phone. */
+.reading-tips .reading-intro{margin:0 0 1em}
+.reading-tips .lead{margin:0 0 1rem}
+.reading-list-lead{margin:1.8rem 0 .6rem}
+.reading-loan-note{margin:0 0 1.4rem;padding:.75rem 1rem;background:var(--accent-soft);border-radius:var(--inner-radius);font-size:var(--fs-inner)}
+.reading-loan-note .book-loan{margin:0 .35rem .15rem 0;vertical-align:.1em}
+ol.books{list-style:none;margin:0;padding:0;counter-reset:book}
+ol.books>li.book{counter-increment:book;position:relative;margin:0;padding:1.4rem 0 1.5rem 3rem;border-top:1px solid var(--line)}
+ol.books>li.book:last-child{border-bottom:1px solid var(--line)}
+ol.books>li.book::before{content:counter(book);position:absolute;left:0;top:1.35rem;width:2.1rem;height:2.1rem;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);border-radius:999px;background:var(--surface);font:600 var(--fs-ui)/1 var(--sans);color:var(--accent-deep)}
+.book-title{font:600 1.3125rem/1.3 var(--serif);letter-spacing:-.005em;margin:0 0 .2rem}
+.book-title a{text-decoration-thickness:1px}
+.book-author{margin:0 0 .5rem;font-size:var(--fs-ui);font-weight:600;color:var(--ink-2)}
+.book-loan{display:inline-block;margin:0 0 .6rem;padding:.1rem .6rem;border:1px solid var(--accent);border-radius:999px;background:var(--surface);
+  font:600 .8125rem/1.5 var(--sans);color:var(--accent-deep)}
+main .book-text{margin:0 0 .7rem}
+.book-facts{display:flex;flex-wrap:wrap;gap:.2rem 1.4rem;margin:0;font-size:var(--fs-small);color:var(--ink-2)}
+.book-facts>div{display:flex;gap:.35rem}.book-facts dt{font-weight:700;color:var(--ink)}.book-facts dt::after{content:":"}.book-facts dd{margin:0}
+@media (max-width:29.99rem){ol.books>li.book{padding-left:2.6rem}ol.books>li.book::before{width:1.9rem;height:1.9rem}}
+
+/* enlarge (teacher 2026-11-03, "kuvat aukeaa klikkaamalla isoksi, ei kuitenkaan liian isoksi; simulaatiot saa klikattua
+   isoksi"): lesson.js part 7 opens a figure or a photo in a dialog, sim-embed.js shows the simulation card full screen. */
+.zoom-host{position:relative}
+svg.zoomable,img.zoomable{cursor:zoom-in}
+.zoom-btn{position:absolute;top:.4rem;right:.4rem;z-index:2;display:grid;place-items:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.94);color:var(--accent-deep);cursor:zoom-in;opacity:0;transition:opacity .15s;box-shadow:0 2px 8px rgba(20,23,30,.12)}
+.zoom-host:hover>.zoom-btn,.zoom-btn:focus-visible{opacity:1}
+article .zoom-btn svg,article .sim-expand svg,.sim-expand svg{flex:none;width:20px;height:20px;max-width:none;padding:0;border:0;border-radius:0;background:none}
+.zoom-btn:focus-visible,.zoom-close:focus-visible,.sim-expand:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (hover:none){.zoom-btn{opacity:0;pointer-events:none}}   /* a phone: the figure itself is the target, no icon over its labels */
+html.zoom-open,html.sim-open{overflow:hidden}
+dialog.zoom-dlg{box-sizing:border-box;width:fit-content;max-width:min(96vw,1240px);max-height:96vh;margin:auto;padding:.6rem .8rem .8rem;border:0;border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 18px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;overflow:hidden}
+dialog.zoom-dlg:not([open]){display:none}
+dialog.zoom-dlg::backdrop{background:rgba(14,17,22,.78)}
+.zoom-close{align-self:flex-end;display:inline-flex;align-items:center;gap:.35rem;min-height:40px;padding:0 1rem;margin:0 0 .4rem;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);background:var(--surface);border:1px solid var(--accent-deep);border-radius:999px;cursor:pointer}
+.zoom-close span{font-size:1.4em;line-height:1}
+.zoom-stage{max-width:min(92vw,1200px);display:flex;justify-content:center;align-items:flex-start;overflow:hidden;cursor:zoom-out}
+.zoom-stage.zoom-pan{overflow:auto;justify-content:flex-start;max-height:calc(96vh - 7rem);-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.zoom-stage>svg,.zoom-stage>img{display:block;flex:none;background:#fff;border-radius:6px}
+.zoom-cap{max-width:44rem;margin:.6rem auto 0;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2)}.zoom-cap:empty{display:none}
+.zoom-cap .photo-credit{display:block;margin-top:.2rem}
+#sim{position:relative}#sim>h2,#sim>h3{padding-right:3rem}
+.sim-expand{position:absolute;top:.45rem;right:.6rem;z-index:3;display:grid;place-items:center;width:40px;height:40px;min-height:40px;padding:0;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);background:var(--surface);border:1px solid var(--accent-deep);border-radius:999px;cursor:pointer}
+.sim-expand:hover{background:var(--accent-soft)}
+#sim.sim-expanded{position:fixed;inset:0;z-index:1000;margin:0!important;max-width:none;width:auto;height:auto;border:0;border-radius:0;padding:.4rem 1.2rem 1.2rem;overflow:auto;overscroll-behavior:contain;background:var(--surface)}
+#sim.sim-expanded:fullscreen{width:100%;height:100%;box-sizing:border-box}
+#sim.sim-expanded::backdrop{background:var(--surface)}
+#sim.sim-expanded>h2,#sim.sim-expanded>h3{padding-right:3.5rem}
+#sim.sim-expanded .sim-canvas{max-width:calc((100vh - 5rem) * var(--sim-ar-x,1.5));min-width:min(100%,20rem)}
+#sim.sim-expanded>.sim-info,#sim.sim-expanded #sim-root details.note{display:none}   /* full screen is for the picture and the controls: Käyttöohje, Mallin oletukset and Laskennan selitys stay on the page (teacher 2026-11-03) */
+#sim.sim-expanded{--fs-ui:clamp(.9375rem,.45rem + .6vw,1.5rem);--fs-small:clamp(.875rem,.4rem + .55vw,1.35rem)}   /* a large screen or a projector: the controls and values grow with the picture */
+@media (min-width:64rem) and (min-aspect-ratio:4/3){   /* a laptop or a wide screen: the picture on the left, the controls and the values beside it */
+  #sim.sim-expanded #sim-root:has(>.sim-canvas){display:grid;grid-template-columns:minmax(0,1fr) clamp(18rem,20vw,34rem);column-gap:1.5rem;align-items:start}
+  #sim.sim-expanded #sim-root>.sim-canvas{grid-column:1;grid-row:1/span 40;margin:0 auto;width:100%;max-width:calc((100vh - 4rem) * var(--sim-ar-x,1.5))}
+  #sim.sim-expanded #sim-root>:not(.sim-canvas){grid-column:2}
+  #sim.sim-expanded #sim-root .controls>label{flex-basis:100%}
+}
+@media print{.zoom-btn,.sim-expand,dialog.zoom-dlg{display:none!important}}
+/* Read aloud (readaloud.js, teacher 2026-11-03): Kuuntele / Tauko at the right end of the stage bar, its menu (speed,
+   voice) and its note floating under the bar, and where the reading is: the block tinted, the sentence and the word
+   highlighted (CSS Custom Highlight API, the page itself is not changed). Outline and shadow only, so the layout never moves. */
+.ra-bar{margin:.25rem 0 1rem;display:flex;gap:.25rem}.ra-bar[hidden]{display:none}
+.ra-ui svg{width:22px;height:22px;max-width:none;flex:none;background:none;border:0;border-radius:0;padding:0}   /* not the figure frame of article svg */
+.ra-start,.ra-more{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:40px;min-width:40px;font:600 var(--fs-small) var(--sans);border:1px solid var(--accent-deep);border-radius:999px;background:var(--surface);color:var(--accent-deep);cursor:pointer;white-space:nowrap}
+.ra-start{padding:0 .95rem 0 .75rem}.ra-more{padding:0}
+.ra-start[aria-pressed="true"]{background:var(--accent-deep);color:#fff}
+.ra-start:hover,.ra-more:hover,.ra-more[aria-expanded="true"]{background:var(--accent-soft);color:var(--accent-deep)}
+.ra-start[aria-pressed="true"]:hover{background:var(--accent);color:#fff}
+.ra-start:focus-visible,.ra-more:focus-visible,.ra-speeds input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.ra-menu,.ra-note{position:fixed;z-index:60;max-width:min(20rem,calc(100vw - 16px));padding:.75rem .9rem;border:1px solid var(--line);border-radius:14px;background:var(--surface);box-shadow:0 10px 30px rgba(20,23,30,.18)}
+.ra-menu[hidden],.ra-note[hidden]{display:none}
+.ra-speeds{margin:0;padding:0;border:0;min-width:0;display:flex;flex-wrap:wrap;gap:.35rem}
+.ra-speeds legend{padding:0;margin:0 0 .4rem;font:600 var(--fs-small) var(--sans);color:var(--ink-2)}
+.ra-speeds label{display:inline-flex;align-items:center;gap:.35rem;min-height:44px;padding:0 .8rem;border:1px solid var(--line);border-radius:999px;font:500 var(--fs-ui) var(--sans);cursor:pointer}
+.ra-speeds label:has(input:checked){border-color:var(--accent-deep);background:var(--accent-soft);color:var(--accent-deep);font-weight:700}
+.ra-speeds input{accent-color:var(--accent);margin:0}
+.ra-note{margin:0;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2);cursor:pointer}
+/* under 600 px (teacher 2026-11-04, UI fix 2): Kuuntele is the icon only (its name stays in aria-label and in a
+   visually hidden span) and the menu arrow sits inside the same pill, so at least two stage chips fit beside it */
+@media (max-width:599.98px){
+  nav.toc .toc-tools{gap:0;padding-left:.25rem}
+  nav.toc a{gap:.3rem;padding:0 .6rem 0 .4rem}nav.toc a:not(:has(.toc-no)){padding-left:.6rem}
+  nav.toc .toc-no{width:1.3rem;height:1.3rem}
+  nav.toc .toc-label{max-width:12.5rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}   /* a long section name (investigations) */
+  nav.toc a:not(:has(span)){display:inline-block;max-width:13rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:38px}
+  .toc-tools .ra-start{position:relative;gap:0;padding:0 .15rem 0 .5rem;border-right:0;border-radius:999px 0 0 999px}
+  .toc-tools .ra-start span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+  .toc-tools .ra-more{min-width:28px;padding:0 .3rem 0 0;border-left:0;border-radius:0 999px 999px 0}
+  .toc-tools .ra-more svg{width:18px;height:18px}
+}
+.ra-better{display:flex;align-items:center;gap:.5rem;min-height:44px;margin-top:.5rem;font:500 var(--fs-ui) var(--sans);cursor:pointer}
+.ra-better[hidden]{display:none}.ra-better input{accent-color:var(--accent);margin:0;width:1.15rem;height:1.15rem}
+.ra-on{background:#fff9db;box-shadow:0 0 0 .35rem #fff9db;border-radius:4px}
+::highlight(ra-sentence){background-color:#ffec99;color:var(--ink)}
+::highlight(ra-word){background-color:#fcc419;color:var(--ink);text-decoration:underline;text-decoration-thickness:2px}
+@media print{.ra-ui{display:none!important}.ra-on{background:none;box-shadow:none}}
+.ra-voice{display:flex;align-items:center;gap:.5rem;margin:.75rem 0 0;font:500 var(--fs-small) var(--sans);color:var(--ink-2)}
+.ra-voice[hidden]{display:none}
+.ra-voice select{flex:1;min-width:0;max-width:17rem;min-height:44px;padding:0 .4rem;font:500 var(--fs-ui) var(--sans);color:var(--ink);border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.ra-voice select:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+/* Concept cards (kortit.js, teacher 2026-11-03: "kortit tulevat luvun luo"). One card everywhere: both faces in one
+   grid cell, so a turned card keeps its height and a row never gets an empty column; a lesson and Sovella show two
+   cards side by side from 36rem (stacked on a phone), never a sideways scroll (teacher 2026-11-04), an answered card
+   replaced by the next one. Without JavaScript the cards are a definition list (.kc-dl). The bold terms of
+   Teoriatiivistelmä that name a card get a dotted underline and open a popover (.kc-pop). */
+.kc-intro{font-size:var(--fs-inner);color:var(--ink-2);margin:0 0 1rem}
+.kc-dl{margin:0 0 1rem;display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem;min-width:0}
+.kc-item{background:var(--surface);border:1px solid var(--line);border-radius:var(--inner-radius);padding:.7rem 1rem}
+.kc-item dt{font:700 var(--fs-body) var(--sans);color:var(--ink)}
+.kc-item dd{margin:.15rem 0 0;font-size:var(--fs-inner)}
+/* a long word or formula never widens the page (teacher 2026-11-04, UI fix 5: 360 px scrollWidth === clientWidth) */
+.kc-item,.kc-item dt,.kc-item dd{min-width:0;overflow-wrap:anywhere}
+.kc-item .katex-display{overflow-x:auto;overflow-y:hidden;max-width:100%}
+.kc-formula{display:block}
+.kc-more,.kc-all{font:600 var(--fs-ui) var(--sans);margin:.9rem 0 0}
+.kc-row{display:grid;gap:.9rem;margin:0 0 .5rem}
+@media (min-width:36rem){.kc-pair .kc-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kc-pair-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;margin:.2rem 0 0}
+.kc-left{margin:0;font-size:var(--fs-small);color:var(--ink-2)}.kc-left:empty{display:none}
+.kc-restart{font:600 var(--fs-ui) var(--sans);min-height:40px;padding:0 .85rem;border-radius:999px;cursor:pointer;border:1px solid var(--accent-deep);background:var(--surface);color:var(--accent-deep)}
+.kc-restart:hover{background:var(--accent-soft)}.kc-restart[hidden]{display:none}
+.kc-card.is-new{animation:kc-in .35s ease-out}
+@keyframes kc-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.kc-card{perspective:1400px;min-width:0}
+.kc-inner{display:grid;height:100%;transition:transform .45s cubic-bezier(.3,.7,.3,1);transform-style:preserve-3d}
+.kc-card.is-flipped .kc-inner{transform:rotateY(180deg)}
+.kc-face,.kc-back{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:11.5rem;box-sizing:border-box;
+  border:1px solid var(--line);border-radius:var(--card-radius);background:var(--surface);box-shadow:0 1px 2px rgba(20,23,30,.05),0 6px 18px rgba(20,23,30,.06)}
+.kc-face{display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;width:100%;padding:1rem 1rem;text-align:left;cursor:pointer;color:var(--ink);font:inherit;
+  background:linear-gradient(180deg,var(--surface),#fbf8f1)}
+.kc-face:hover{border-color:var(--accent);box-shadow:0 1px 2px rgba(20,23,30,.05),0 8px 22px rgba(20,48,30,.12)}
+.kc-back{transform:rotateY(180deg);padding:.8rem 1rem 1rem;display:flex;flex-direction:column;gap:.35rem}
+.kc-back:focus{outline:none}.kc-back:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.kc-kind{font:700 .8125rem/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.kc-front{flex:1;display:flex;align-items:center;font:600 1.3125rem/1.3 var(--serif);overflow-wrap:anywhere;hyphens:auto;-webkit-hyphens:auto}
+.kc-front.is-def{font:500 var(--fs-inner)/1.5 var(--sans)}
+.kc-hint{font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+.kc-hint::after{content:" ↻"}
+.kc-back-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.kc-turn{min-width:40px;min-height:40px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--accent-deep);font:600 1.05rem var(--sans);cursor:pointer}
+.kc-back-term{margin:0;font:700 var(--fs-ui)/1.3 var(--sans);color:var(--ink-2)}
+.kc-def{margin:0;font-size:var(--fs-inner);line-height:1.5}
+.kc-def-term{font:600 1.25rem/1.3 var(--serif)}
+.kc-back .kc-formula,.kc-pop .kc-formula{margin:.15rem 0;overflow-x:auto;overflow-y:hidden}
+.kc-back .kc-formula .katex-display,.kc-pop .kc-formula .katex-display{margin:.3rem 0;text-align:left}
+.kc-img{max-width:100%;height:auto;margin:.2rem 0}
+.kc-actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:auto;padding-top:.45rem}
+.kc-actions button,.kc-add,.kc-button,.kc-app button{font:600 var(--fs-ui) var(--sans);min-height:40px;padding:0 .85rem;border-radius:999px;cursor:pointer}
+.kc-good{border:1px solid var(--accent-deep);background:var(--accent-deep);color:#fff}
+.kc-good:hover{background:var(--accent)}
+.kc-again{border:1px solid #b4532a;background:var(--surface);color:#8a3b1a}
+.kc-again:hover{background:#fff4ec}
+.kc-actions button:disabled{opacity:.55;cursor:default}
+.kc-status{margin:0;font-size:var(--fs-small);color:var(--ink-2);min-height:1.2em}
+.kc-status:empty{display:none}
+.kc-card.in-deck .kc-face{border-color:#e0a77f;box-shadow:inset 4px 0 0 #d9822b,0 6px 18px rgba(20,23,30,.06)}
+@media (prefers-reduced-motion:reduce){.kc-inner{transition:none}.kc-card.is-new{animation:none}}
+/* the bold terms and the chips of Teoriatiivistelmä */
+strong.kc-ready{font-weight:inherit}
+.kc-term-btn{font:inherit;font-weight:700;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;
+  text-decoration:underline dotted;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:.22em}
+.kc-term-btn:hover,.kc-term-btn[aria-expanded="true"]{color:var(--accent-deep);text-decoration-style:solid}
+.kc-chips{margin:1rem 0 0;padding:.75rem 1rem .85rem;border-radius:var(--inner-radius);background:var(--bg-tint)}
+.kc-chips-label{margin:0 0 .5rem;font:700 var(--fs-ui) var(--sans);color:var(--ink-2)}
+.kc-chip-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.4rem}
+.kc-chip-list li{margin:0}
+.kc-chip{min-height:40px;padding:0 .9rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:600 var(--fs-ui) var(--sans);cursor:pointer;
+  text-decoration:underline dotted;text-decoration-color:var(--accent);text-underline-offset:.2em}
+.kc-chip:hover,.kc-chip[aria-expanded="true"]{border-color:var(--accent);color:var(--accent-deep)}
+.kc-pop{position:absolute;z-index:70;box-sizing:border-box;padding:.9rem 1.1rem 1rem;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 14px 36px rgba(20,23,30,.18);font-size:var(--fs-inner);line-height:1.5}
+.kc-pop-term{margin:0 2.2rem .3rem 0;font:600 1.125rem/1.3 var(--serif)}
+.kc-pop .kc-def{margin:0 0 .4rem}
+.kc-pop-close{position:absolute;top:.4rem;right:.4rem;width:40px;height:40px;border:0;border-radius:999px;background:none;font:400 1.5rem/1 var(--sans);color:var(--ink-2);cursor:pointer}
+.kc-pop-close:hover{background:var(--bg-tint)}
+.kc-add{margin-top:.35rem;border:1px solid var(--accent-deep);background:var(--surface);color:var(--accent-deep)}
+.kc-add[aria-pressed="true"]{background:var(--accent-soft)}
+.kc-pop .kc-status{margin-top:.4rem}
+/* the module page's deck, Sovella itsenäisesti and Käsitetakomo */
+.kc-deck .kc-deck-count{margin:0 0 .7rem}
+.kc-button{display:inline-flex;align-items:center;border:1px solid var(--accent-deep);background:var(--accent-deep);color:#fff;text-decoration:none}
+.kc-button:hover{background:var(--accent)}
+.kc-practice{margin:2rem 0 1rem;padding:1.1rem 1.25rem 1rem;border:1px solid #e9cdb6;border-radius:var(--card-radius);background:#fffaf4}
+.kc-practice h2{margin-top:0}.kc-practice .kc-intro,.kc-section .kc-intro,.kc-deck p{max-width:var(--measure)}
+.kc-app-head h1{margin-bottom:.3rem}
+.kc-app h2{font-size:var(--fs-h2);margin:1.2rem 0 .8rem}
+.kc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(10.5rem,1fr));gap:.7rem}
+.kc-tile{display:flex;flex-direction:column;align-items:flex-start;gap:.2rem;padding:.9rem 1rem!important;min-height:7rem!important;border-radius:var(--card-radius)!important;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink);text-align:left}
+.kc-tile:hover:not(:disabled){border-color:var(--accent)}
+.kc-tile:disabled{opacity:.6;cursor:default}
+.kc-tile-code{font:800 1.5rem/1 var(--sans);color:var(--brand-green)}
+.kc-tile-name{font:600 var(--fs-ui)/1.35 var(--sans)}
+.kc-tile-count{margin-top:auto;font:500 var(--fs-small) var(--sans);color:var(--ink-2)}
+.kc-back-btn{border:1px solid var(--line);background:var(--surface);color:var(--accent-deep)}
+.kc-topics{display:grid;gap:.45rem}
+.kc-topic{display:flex;gap:.45rem;align-items:stretch}
+.kc-topic-main{flex:1;display:flex;align-items:center;gap:.6rem;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px!important;min-height:48px!important}
+.kc-topic-main:hover{border-color:var(--accent)}
+.kc-topic-all .kc-topic-main{background:var(--accent-soft)}
+.kc-topic-label{flex:1}
+.kc-topic-n{font:500 var(--fs-small) var(--sans);color:var(--ink-2)}
+.kc-go{color:var(--accent-deep)}
+.kc-pick{width:48px;padding:0!important;border:2px solid var(--line);background:var(--surface);color:transparent;border-radius:999px!important}
+.kc-pick[aria-pressed="true"]{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+.kc-topic.is-chosen .kc-topic-main{border-color:var(--accent-deep)}
+.kc-startbar{display:flex;flex-wrap:wrap;gap:.5rem;margin:.9rem 0 0}
+.kc-start{border:1px solid var(--accent-deep);background:var(--accent-deep);color:#fff}
+.kc-clear{border:1px solid var(--line);background:var(--surface);color:var(--ink-2)}
+.kc-tip{font-size:var(--fs-small);color:var(--ink-2);margin:.8rem 0 0}
+.kc-mode{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 0}
+.kc-mode button{border:1px solid var(--line);background:var(--surface);color:var(--ink-2)}
+.kc-mode button[aria-pressed="true"]{border-color:var(--accent-deep);background:var(--accent-soft);color:var(--accent-deep)}
+.kc-studybar{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.3rem 1rem;margin-top:1rem}
+.kc-studybar h2{margin:0;font-size:var(--fs-h3)}
+.kc-tally{font:600 var(--fs-small) var(--sans);color:var(--ink-2)}
+.kc-track{height:6px;border-radius:999px;background:var(--line-2);margin:.6rem 0 1.2rem;overflow:hidden}
+.kc-fill{height:100%;width:0;background:var(--accent);transition:width .3s}
+.kc-study .kc-face,.kc-study .kc-back{min-height:17rem}
+.kc-study .kc-front.is-term{font-size:1.75rem;justify-content:center;text-align:center;width:100%}
+.kc-done{text-align:center;padding:1.5rem 1rem;border:1px solid var(--line);border-radius:var(--card-radius);background:var(--surface)}
+.kc-done-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem;margin-top:1rem}
+.kc-done-actions button{border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.kc-done-actions button.kc-primary{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
+.kc-static-module{margin-top:1rem;min-width:0}
+.kc-static-module>summary{cursor:pointer;padding:.55rem 0}
+.kc-static-module>summary h2{display:inline;margin:0;font-size:1.25rem}
+@media print{.kc-chips,.kc-pop,.kc-turn,.kc-actions,.kc-face{display:none!important}.kc-inner{transform:none!important}.kc-back{transform:none;backface-visibility:visible;-webkit-backface-visibility:visible;min-height:0}}
+
+/* Sivustosta in Kiviruukin lukio's colours (teacher 2026-11-04, after his school pages): navy #012169, pink #fca5c7 */
+:root:has(main.about-page){--bg:#fff;--bg-tint:#f3f5f9;--ink:#0b1638;--ink-2:#3c4563;--line:#dfe5eb;--line-2:#ecf0f4;
+  --accent:#012169;--accent-deep:#012169;--accent-soft:#fff0f6;--brand-green:#012169;--kr-navy:#012169;--kr-navy-deep:#00174f;--kr-pink:#fca5c7}
+body:has(main.about-page){background-image:none}
+.about-page .about-hero{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.9rem 1.75rem;margin:0 0 2.25rem;padding:1.25rem 1.75rem;border-radius:var(--card-radius);color:#fff;
+  background:linear-gradient(135deg,var(--kr-navy) 0%,var(--kr-navy-deep) 100%)}
+.about-page .about-logo{display:block;flex:none;order:2;width:auto;height:64px;margin:0 0 0 auto}   /* the logo at the right end of the banner, beside the heading (teacher 2026-11-04: less empty blue, logo on the right) */
+.about-page .about-hero h1{margin:0;color:#fff;display:flex;align-items:center;gap:.75rem}
+.about-page .about-hero h1::before{content:"";flex:none;width:26px;height:3px;background:var(--kr-pink)}
+.about-page h2{color:var(--kr-navy);padding-left:.75rem;border-left:4px solid var(--kr-pink)}
+.about-page strong{color:var(--kr-navy)}
+@media (max-width:600px){.about-page .about-hero{gap:.75rem;padding:1rem 1.1rem}.about-page .about-hero h1{gap:.5rem}.about-page .about-hero h1::before{width:16px}.about-page .about-logo{height:48px}}
+.about-page .about-tag{display:inline-block;margin:1.5rem 0 0;padding:.3rem .9rem;border-radius:999px;background:var(--kr-pink);color:var(--kr-navy);font:700 var(--fs-ui) var(--sans);letter-spacing:.01em}
