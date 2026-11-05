@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ruukkilab.fi/FY1-koe.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY1-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY1.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY10.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY14.html</loc></url>
+  <url><loc>https://ruukkilab.fi/FY2-koe.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY2-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY2.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY3-sovella.html</loc></url>
@@ -36,6 +38,7 @@
   <url><loc>https://ruukkilab.fi/en/FY7.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY8-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY8.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/FY9.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-3.html</loc></url>
@@ -178,6 +181,22 @@
   <url><loc>https://ruukkilab.fi/en/fy8-7.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy8-8.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy8-9.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-aallot.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-energia.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-harjoituskoe.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-kaasut.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-koe.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-kokeellisuus.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-lampo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-liike.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-magnetismi-valo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-mittaaminen.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-moderni.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-sahkokentta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-sailymislait.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-tasavirta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-voimat.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/fy9-ympyraliike.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/</loc></url>
   <url><loc>https://ruukkilab.fi/en/kasitteet.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/lukuvinkit.html</loc></url>
@@ -202,6 +221,7 @@
   <url><loc>https://ruukkilab.fi/fi-easy/FY7.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/FY8-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/FY8.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/FY9.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-3.html</loc></url>
@@ -315,6 +335,22 @@
   <url><loc>https://ruukkilab.fi/fi-easy/fy8-7.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy8-8.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy8-9.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-aallot.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-energia.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-harjoituskoe.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-kaasut.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-koe.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-kokeellisuus.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-lampo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-liike.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-magnetismi-valo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-mittaaminen.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-moderni.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-sahkokentta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-sailymislait.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-tasavirta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-voimat.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/fy9-ympyraliike.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/kasitteet.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/lukuvinkit.html</loc></url>
