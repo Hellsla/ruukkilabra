@@ -208,6 +208,7 @@
   <url><loc>https://ruukkilab.fi/en/palautukset.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/tietoa.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/tietosuoja.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/vihkot.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/yo-sekoitin.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/FY1-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/FY1.html</loc></url>
@@ -363,6 +364,7 @@
   <url><loc>https://ruukkilab.fi/fi-easy/palautukset.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/tietoa.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/tietosuoja.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/vihkot.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/yo-sekoitin.html</loc></url>
   <url><loc>https://ruukkilab.fi/fy1-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/fy1-2.html</loc></url>
@@ -536,5 +538,6 @@
   <url><loc>https://ruukkilab.fi/tvt-taulukkolaskenta.html</loc></url>
   <url><loc>https://ruukkilab.fi/tvt-tyoselostus.html</loc></url>
   <url><loc>https://ruukkilab.fi/tvt-videoanalyysi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/vihkot.html</loc></url>
   <url><loc>https://ruukkilab.fi/yo-sekoitin.html</loc></url>
 </urlset>
