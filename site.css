@@ -240,9 +240,6 @@ main.module-page>.lead,main.module-page>.mod-status{max-width:var(--measure)}
 main.local-course>p,main.local-course>ul,main.local-course>ol:not(.ch-cards),main.local-course>dl,main.local-course>details{max-width:var(--measure)}   /* a school's own course: its prose at reading width, the cards wide */
 h3.ch-theme{font:600 var(--fs-small)/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);margin:1.4rem 0 .6rem}
 ol.lessons.ch-cards>li:first-child>h3.ch-theme{margin-top:.6rem}
-/* a local course chapter's label (scripts/cardgrid.py): its heading and question above its first card */
-ol.lessons li.ch-card>.ch-label{margin:1.4rem 0 .6rem}ol.lessons.ch-cards>li:first-child>.ch-label{margin-top:.6rem}
-.ch-label>h3.ch-theme{margin:0}.ch-label>p.ch-theme-q{margin:.2rem 0 0;font-size:var(--fs-small);line-height:1.45;color:var(--ink-2)}
 .ch-card .l-num .bank-level{text-transform:none;letter-spacing:0;font-size:.8125rem;padding:0 .45rem}
 .ch-card .bank-meta{margin:0}
 /* One continuous grid (teacher 2026-11-04): each li holds the theme label (only the theme's first chapter has one) and the
@@ -270,14 +267,34 @@ ol.lessons li.ch-card.live .ch-box:hover>a{text-decoration:underline}
   ol.lessons li.ch-card{display:grid;grid-row:span 2;grid-template-rows:subgrid}
   ol.lessons li.ch-card>h3.ch-theme{grid-row:1;align-self:end;margin:1rem 0 .6rem}
   ol.lessons.ch-cards>li:first-child>h3.ch-theme{margin-top:.6rem}
-  ol.lessons li.ch-card>.ch-label{grid-row:1;align-self:end;margin:1rem 0 .6rem}
-  ol.lessons.ch-cards>li:first-child>.ch-label{margin-top:.6rem}
   ol.lessons li.ch-card>.ch-box{grid-row:2;margin-bottom:1rem}
   ol.lessons li.ch-card.live>.ch-box{grid-template-columns:minmax(0,1fr);grid-template-areas:"img" "num" "title" "why" "tags";grid-template-rows:auto auto auto 1fr auto;padding:0 0 .9rem;overflow:hidden}
   ol.lessons li.ch-card.live>.ch-box>*:not(.ch-img){margin-inline:1rem}
   ol.lessons li.ch-card.live .l-num{margin-top:.75rem}
   .ch-card .ch-img{border-radius:0;border-bottom:1px solid var(--line-2)}
   ol.lessons li.ch-card.soon>.ch-box{padding:1rem}
+}
+/* Kuvalaatat (teacher 2026-11-08, "16 oppituntia vaatii skrollausta"): on a module page the chapter cards are small tiles,
+   the opening illustration, "Luku n" and the title without the Miksi question (it opens the chapter itself), two in a
+   row on a phone and as many as fit at 10rem from 40rem (six at 1280 px), so 16 chapters take about one screen. The
+   theme labels stay in the one continuous grid (subgrid rows, as above). FY9, FY14 and FY10 keep the large cards. */
+main.module-page ol.lessons.ch-cards{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:.6rem}
+main.module-page ol.lessons li.ch-card{display:grid;grid-row:span 2;grid-template-rows:subgrid}
+main.module-page ol.lessons li.ch-card>h3.ch-theme{grid-row:1;align-self:end;margin:.8rem 0 .4rem}
+main.module-page ol.lessons.ch-cards>li:first-child>h3.ch-theme{margin-top:.4rem}
+main.module-page ol.lessons li.ch-card>.ch-box{grid-row:2}
+main.module-page ol.lessons li.ch-card.live>.ch-box{grid-template-columns:minmax(0,1fr);grid-template-areas:"img" "num" "title" "tags";grid-template-rows:auto auto 1fr auto;padding:0 0 .6rem;overflow:hidden;margin-bottom:.6rem}
+main.module-page ol.lessons li.ch-card.live>.ch-box>*:not(.ch-img){margin-inline:.6rem}
+main.module-page ol.lessons li.ch-card .l-num{margin-top:.4rem;font-size:.75rem}
+main.module-page ol.lessons li.ch-card .ch-box>a,main.module-page ol.lessons li.ch-card .ch-box>.ch-title{font-size:.9375rem;line-height:1.3}
+main.module-page .ch-card p.ch-why{display:none}
+main.module-page .ch-card .ch-img{border-radius:0;border-bottom:1px solid var(--line-2)}
+main.module-page ol.lessons li.ch-card.soon>.ch-box{padding:.6rem;margin-bottom:.6rem}
+@container content (min-width:40rem){
+  main.module-page ol.lessons.ch-cards{grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));column-gap:.75rem}
+  main.module-page ol.lessons li.ch-card.live>.ch-box{grid-template-areas:"img" "num" "title" "tags";grid-template-rows:auto auto 1fr auto;padding:0 0 .7rem;margin-bottom:.75rem}
+  main.module-page ol.lessons li.ch-card.live>.ch-box>*:not(.ch-img){margin-inline:.7rem}
+  main.module-page ol.lessons li.ch-card>h3.ch-theme{margin:.6rem 0 .45rem}
 }
 .mod-more{display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:0 2.5rem;margin-top:1.4rem}
 .mod-more>section>h2:first-child{margin-top:1rem}
@@ -398,6 +415,36 @@ footer.bottom{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);
 footer.bottom a{display:inline-flex;align-items:center;min-height:44px}
 footer.bottom .copyright{white-space:nowrap}
 .crumbs:empty{display:none}
+/* A chapter page's path goes from chapter to chapter (teacher 2026-11-08, build.py chapter_crumbs): its last part is the
+   chapter menu (a <details>), Edellinen / Seuraava at the row's right end; "FY3 · Luku 13" over the title then only on paper. */
+nav.crumbs:has(details.ch-menu){position:relative;flex-wrap:nowrap}
+.crumbs details.ch-menu{min-width:0;flex:0 1 auto}
+.crumbs details.ch-menu>summary{display:flex;align-items:center;gap:.35rem;min-height:40px;padding:0 .3rem;margin:0 -.3rem;list-style:none;cursor:pointer;font-weight:600;color:var(--accent-deep);white-space:nowrap}
+.crumbs details.ch-menu>summary::-webkit-details-marker{display:none}
+.crumbs details.ch-menu>summary::before,.crumbs details.ch-menu[open]>summary::before{content:none;display:none}
+.crumbs details.ch-menu>summary::after{content:"▾";font-size:.7em;flex:none}
+.crumbs details.ch-menu[open]>summary::after{content:"▴"}
+.crumbs details.ch-menu>summary .t{overflow:hidden;text-overflow:ellipsis;line-height:1.4;padding:.15rem 0}
+.crumbs details.ch-menu>summary:hover .t{text-decoration:underline}
+.crumbs details.ch-menu>summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+.crumbs .ch-menu .tt{display:none}
+.ch-menu-panel{position:absolute;top:2.6rem;left:0;z-index:40;width:min(32rem,100%);max-height:min(78vh,40rem);overflow:auto;padding:.5rem .4rem .7rem;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(20,23,30,.16);white-space:normal;font-size:var(--fs-inner,1rem)}
+.ch-menu-panel p.ch-menu-theme{font:600 .75rem/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);margin:.7rem .7rem .3rem}
+.ch-menu-panel p.ch-menu-theme:first-child{margin-top:.2rem}
+.ch-menu-panel ol{list-style:none;margin:0;padding:0}
+.ch-menu-panel ol.ch-menu-more{border-top:1px solid var(--line-2);margin-top:.6rem;padding-top:.4rem}
+.ch-menu-panel li>a,.ch-menu-panel li>span{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.4rem;min-height:40px;align-items:center;padding:.2rem .7rem;border-radius:8px;color:var(--ink);text-decoration:none;line-height:1.35}
+.ch-menu-panel li>span.soon{color:var(--ink-2)}
+.ch-menu-panel li>a:hover{background:var(--bg-tint);text-decoration:underline}
+.ch-menu-panel li>a:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.ch-menu-panel .n{color:var(--copper-ink);font-weight:600;font-variant-numeric:tabular-nums}
+.ch-menu-panel a[aria-current]{background:var(--bg-tint);color:var(--accent-deep);font-weight:700;box-shadow:inset 3px 0 0 var(--accent)}
+.crumbs .ch-arrows{margin-left:auto;padding-left:.5rem;display:flex;gap:.4rem;flex:none}
+.crumbs .ch-arrows a{gap:.3rem;margin:0;padding:0 .8rem;min-width:40px;min-height:40px;border:1px solid var(--line);border-radius:999px;background:var(--surface);white-space:nowrap}
+.crumbs .ch-arrows a:hover{border-color:var(--accent)}
+.crumbs .ch-arrows .lbl{display:none}
+@media (min-width:700px){.crumbs .ch-menu .tt,.crumbs .ch-arrows .lbl{display:inline}}
+@media screen{body:has(details.ch-menu) .eyebrow.ch-no{display:none}}
 
 /* tables: a level-3 element, light frame, small sans heads; numbers in tabular figures */
 table{display:block;position:relative;width:fit-content;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;border:1px solid var(--line);border-radius:12px;font-variant-numeric:tabular-nums;
@@ -863,7 +910,7 @@ li.is-done .ex-done{color:var(--accent-deep)}
 .pm-count{margin:0 0 .5rem;font:700 var(--fs-body) var(--sans);font-variant-numeric:tabular-nums}
 .pm-bar{height:10px;border-radius:999px;background:var(--line-2);overflow:hidden}
 .pm-bar>span{display:block;height:100%;width:0;background:var(--given);transition:width .3s}
-.pm-graph{margin:.7rem 0 0}.pm-graph>summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
+.pm-graph{margin:.7rem 0 0}
 .pm-chart{margin:.3rem 0 0;overflow:hidden}.pm-svg{display:block;max-width:100%;height:auto}
 .pm-grid{stroke:var(--line-2)}.pm-axis{stroke:var(--fig-muted)}.pm-total{stroke:var(--given);stroke-dasharray:4 4}
 .pm-tick{font:13px var(--sans);fill:var(--ink-2)}.pm-tick-total{fill:var(--accent-deep);font-weight:700}.pm-goal{stroke:var(--given);stroke-width:2}.pm-tick-goal{fill:var(--given);font-weight:700}
@@ -871,8 +918,9 @@ li.is-done .ex-done{color:var(--accent-deep)}
 .pm-note,.pm-empty{margin:.7rem 0 0;font-size:var(--fs-small);color:var(--ink-2)}
 /* Oma itsearvio beside Oma eteneminen (teacher 2026-11-07, templates/omaarvio.js): the skills fingerprint, a column per
    chapter and a row per statement in the Itsearvio scale's colours; an unassessed cell is an empty outline */
-.my-wrap{margin:0 0 1rem}.my-wrap>summary{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:.45rem 1.1rem;border:1.5px solid var(--accent-deep);border-radius:999px;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);cursor:pointer;list-style:none}
-.my-wrap[open]>summary{margin-bottom:1rem}
+.my-top{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:0 0 1rem}.my-top .work-tools{margin:0}.my-top:not(:has(>:not([hidden]))){display:none}
+.my-wrap{margin:0 0 1rem}.my-wrap>summary{display:none}.my-toggle{background:none;display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:.45rem 1.1rem;border:1.5px solid var(--accent-deep);border-radius:999px;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep);cursor:pointer;list-style:none}
+.my-toggle[hidden]{display:none}.my-toggle::before{content:"▸";display:inline-block;width:1.2em;flex:none}.my-toggle[aria-expanded="true"]::before{content:"▾"}
 .my-row{display:grid;gap:1rem;margin:0 0 1.8rem;align-items:start}.my-row>.my-progress{margin:0}
 @media (min-width:60rem){.my-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .my-selfmap{padding:var(--card-pad);background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius)}
@@ -887,8 +935,6 @@ li.is-done .ex-done{color:var(--accent-deep)}
 .sm-cell[data-level=a]{background:var(--sa-a);box-shadow:none}.sm-cell[data-level=b]{background:var(--sa-b);box-shadow:none}
 .sm-cell[data-level=c]{background:var(--sa-c);box-shadow:none}.sm-cell[data-level=d]{background:var(--sa-d);box-shadow:none}
 .sm-cell[data-level=x]{background:var(--sa-x);box-shadow:none}
-.sm-legend{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.3rem;font-size:var(--fs-small);color:var(--ink-2)}
-.sm-legend li{display:flex;align-items:center;gap:.5rem}.sm-legend .sm-cell{width:14px;min-height:14px;flex:none}
 @media print{.ex-done,.ex-done-msg,.done-count,.my-progress,.my-selfmap{display:none!important}}
 .act-core{margin:0 0 .35rem}.act-core .ex-core{margin:0}
 /* Kokeelliset tutkimukset (teacher 2026-10-30, scripts/investigations.py): the lesson page's reading column; the goals
