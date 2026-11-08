@@ -1414,14 +1414,14 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 .ahjo-icon{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 /* the banner: the logo on white beside the heading, a pink rule under it */
 .ahjo-hero{display:flex;align-items:center;gap:1rem 1.75rem;margin:0 0 .75rem;padding:.5rem 0 1rem;border-bottom:4px solid var(--kr-pink)}
-.ahjo-logo{display:block;flex:none;width:88px;height:auto}
+.ahjo-logo{display:block;flex:none;width:124px;height:auto}
 .ahjo-hero-big .ahjo-logo{width:clamp(120px,9rem + 4vw,180px)}
 .ahjo-hero-text{min-width:0}
 .ahjo-eyebrow{margin:0 0 .2rem;font:700 var(--fs-small)/1.3 var(--ahjo-head);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
 .ahjo-hero h1{margin:0 0 .35rem;font-weight:900;font-size:clamp(1.75rem,1.3rem + 1.6vw,2.6rem);line-height:1.1}
 .ahjo-lead{margin:0;font-size:clamp(1.0625rem,1rem + .25vw,1.1875rem);line-height:1.5;color:var(--ink);max-width:44rem}
 .ahjo-opening{margin:.6rem 0 0;font-size:var(--fs-ui);color:var(--ink-2);max-width:44rem}
-@media (max-width:37.5rem){.ahjo-hero{flex-direction:column;align-items:flex-start;gap:.5rem}.ahjo-hero-big .ahjo-logo{width:132px}.ahjo-logo{width:72px}}
+@media (max-width:37.5rem){.ahjo-hero{flex-direction:column;align-items:flex-start;gap:.5rem}.ahjo-hero-big .ahjo-logo{width:132px}.ahjo-logo{width:96px}}
 /* the section's own navigation: a row of pills under the banner; wraps on a phone, never scrolls sideways */
 .ahjo-nav ul{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.75rem;padding:0;list-style:none}
 .ahjo-nav a{display:inline-flex;align-items:center;min-height:40px;padding:0 .95rem;border:1.5px solid var(--kr-navy);border-radius:999px;font:700 var(--fs-ui) var(--ahjo-head);text-decoration:none;color:var(--kr-navy)}
@@ -1429,8 +1429,8 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 .ahjo-nav a[aria-current="page"]{background:var(--kr-navy);color:#fff}
 .ahjo-page a:focus-visible{outline:3px solid var(--kr-navy);outline-offset:2px}
 .ahjo-sec{margin:0 0 2.5rem}
-.ahjo-sec>h2{display:flex;align-items:center;gap:.6rem;margin:0 0 .35rem;font-size:1.5rem;font-weight:900;line-height:1.2}
-.ahjo-sec>h2::before{content:"";flex:none;width:22px;height:4px;border-radius:2px;background:var(--kr-pink)}
+.ahjo-sec>h2,.ahjo-shared-head h2{display:flex;align-items:center;gap:.6rem;margin:0 0 .35rem;font-size:1.5rem;font-weight:900;line-height:1.2}
+.ahjo-sec>h2::before,.ahjo-shared-head h2::before{content:"";flex:none;width:22px;height:4px;border-radius:2px;background:var(--kr-pink)}
 .ahjo-sec>h2>.ahjo-icon{color:var(--kr-navy)}
 .ahjo-cat>h2::before{display:none}
 .ahjo-sec-lead{margin:0 0 1rem;color:var(--ink-2);max-width:44rem;font-size:var(--fs-body)}
@@ -1468,7 +1468,7 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 /* safety on the start page: one quiet panel */
 .ahjo-safety-teaser{display:flex;gap:1rem;align-items:flex-start;padding:1.1rem 1.25rem;border-radius:var(--card-radius);background:var(--kr-pink-soft)}
 .ahjo-safety-teaser h2{margin:0 0 .3rem;font-size:1.375rem;font-weight:900}
-.ahjo-safety-teaser p{margin:0 0 .4rem}
+.ahjo-safety-teaser p{margin:0 0 .4rem;max-width:44rem}   /* the measure (check_layout.py) on a wide screen */
 .ahjo-icon-big{width:40px;height:40px;color:var(--kr-navy)}
 .ahjo-draft-short{font-size:var(--fs-ui);color:var(--ink-2)}
 /* studies linked to Ahjo */
@@ -1498,7 +1498,7 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 .ahjo-chip{display:inline-block;padding:0 .5rem;border-radius:999px;border:1px solid var(--kr-pink);background:var(--kr-pink-soft);color:var(--kr-navy);font-weight:600;line-height:1.6}
 .ahjo-empty{margin:0;padding:.75rem 0;border-top:1px solid var(--line);color:var(--ink-2);font-size:var(--fs-ui)}
 /* the safety page */
-.ahjo-draft{display:flex;gap:.75rem;align-items:flex-start;margin:0 0 1.5rem;padding:1rem 1.15rem;border:1px solid var(--kr-pink);border-left:6px solid var(--kr-navy);border-radius:10px;background:var(--kr-pink-soft);max-width:48rem}
+.ahjo-draft{display:flex;gap:.75rem;align-items:flex-start;margin:0 0 1.5rem;padding:1rem 1.15rem;border:1px solid var(--kr-pink);border-left:6px solid var(--kr-navy);border-radius:10px;background:var(--kr-pink-soft);max-width:44rem}
 .ahjo-draft .ahjo-icon{color:var(--kr-navy);margin-top:.1rem}
 .ahjo-safety{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;grid-template-columns:minmax(0,1fr);column-gap:1.75rem;border-top:1px solid var(--line)}
 @media (min-width:52rem){.ahjo-safety{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -1508,6 +1508,15 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 .ahjo-safety-head h2::before{content:counter(s) ". ";color:var(--ink-2)}
 .ahjo-safety-item>p{margin:.25rem 0 0}
 .ahjo-approved{font-size:var(--fs-small);color:var(--ink-2)}
+/* an Ahjo guide (scripts/ahjo.py guide_body): twelve sections, numbered steps, example code that wraps instead of scrolling */
+.ahjo-guide{max-width:44rem}
+.ahjo-guide h2{margin:2.25rem 0 .6rem;padding-top:.75rem;border-top:3px solid var(--kr-pink);color:var(--kr-navy)}
+.ahjo-guide h2:first-child{margin-top:.5rem}
+.ahjo-guide ol>li,.ahjo-guide ul>li{margin:.35rem 0}
+.ahjo-guide code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;padding:0 .2em;border-radius:4px;background:var(--kr-pink-soft);overflow-wrap:anywhere}
+.ahjo-guide pre{margin:1rem 0 1.25rem;padding:.9rem 1rem;border-radius:10px;background:#0f1a3d;color:#f4f1ea;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.875rem}
+.ahjo-guide pre code{padding:0;background:none;color:inherit;font-size:inherit}
+.ahjo-guide .ahjo-fig svg{max-width:min(100%,38rem)}
 /* the front page's row: the logo as is, a little larger than a module icon so its mark reads */
 .ahjo-list{border-top:0}   /* continues the school's own list, so the planned rows stay level with the modules' */
 @media print{.ahjo-nav{display:none}}
@@ -1530,6 +1539,19 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 /* a picture for each lesson (teacher 2026-11-08 "Haluan kuvat tunneille"): small at the left of the lesson's text */
 .ahjo-lessons li{margin:.55rem 0}
 .ahjo-lesson{display:flow-root}
+.ahjo-lesson-o{border-left-color:var(--kr-navy)}.ahjo-quick{margin:0 0 1.5rem;padding:.2rem 1.1rem .6rem;border:2px solid var(--kr-pink);border-radius:12px;background:var(--kr-pink-soft)}
+.ahjo-quick h2{border-top:0;margin:.7rem 0 .4rem;padding-top:0}.ahjo-quick h3{margin-top:1rem}.ahjo-quick code{background:#fff}.ahjo-more-band h2{border-top:0;margin:.5rem 0 .2rem;padding-top:0}.ahjo-more-band+h2{border-top:0;margin-top:1rem;padding-top:0}.ahjo-more-band{margin:1.5rem 0 .5rem;padding:.4rem 0 .2rem;border-top:3px solid var(--kr-navy)}.ahjo-more-band p{margin:.2rem 0 0;color:var(--ink-2)}
+.ahjo-lesson-s{background:var(--kr-pink-soft);border-radius:0 6px 6px 0;padding:.15rem .6rem}
+.ahjo-make{display:block;margin:.2rem 0 .15rem;font-weight:700;color:var(--kr-navy)}.ahjo-make .ahjo-meta-l{color:var(--kr-pink-dark,#b0306b)}
+.ahjo-levels{display:block;margin:.2rem 0 .15rem;padding-left:.6rem}.ahjo-level{display:grid;grid-template-columns:9.5rem 1fr;column-gap:.4rem;margin:.15rem 0}
+.ahjo-level-l{font-weight:700;color:var(--kr-navy)}.ahjo-level-l::before{content:'';display:inline-block;width:.55rem;height:.55rem;margin-right:.35rem;border-radius:50%;background:var(--kr-pink);vertical-align:.05em}
+.ahjo-level-2 .ahjo-level-l::before{background:var(--kr-navy-mid,#2a4a9b)}.ahjo-level-3 .ahjo-level-l::before{background:var(--kr-navy)}
+@media (max-width:480px){.ahjo-level{display:block}.ahjo-level-l{display:block}}
+.ahjo-approach{margin:0;padding-left:1.6rem;font-size:var(--fs-ui)}.ahjo-approach li{margin:.35rem 0}.ahjo-approach-t{font-weight:700;color:var(--kr-navy)}
+.ahjo-lesson-g{display:block;margin:.15rem 0 .1rem;padding-left:.6rem}
+.ahjo-lesson-g a{display:inline-flex;align-items:center;min-height:24px}
+.ahjo-milestone{display:table;margin:0 0 .3rem;white-space:normal;border-radius:.6rem}
+.ahjo-deep{margin:0;padding-left:1.2rem;font-size:var(--fs-ui)}.ahjo-deep li{margin:.4rem 0}
 .ahjo-lesson-art{float:left;width:112px;margin:.15rem .75rem .3rem 0;border-radius:8px;overflow:hidden}.ahjo-lesson-b{display:block;overflow:hidden}
 @media (max-width:480px){.ahjo-lesson-art{float:none;display:block;width:132px;margin:.1rem 0 .4rem}}
 .ahjo-course-art{margin:-.35rem -.5rem .8rem}
@@ -1548,3 +1570,38 @@ main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
 .ahjo-course-res a{display:inline-flex;align-items:center;min-height:32px;font:700 1.0625rem/1.4 var(--ahjo-head)}
 .ahjo-res-k{display:inline-block;margin-left:.3rem;padding:0 .45rem;border-radius:999px;background:var(--bg-tint);font:600 .8125rem/1.6 var(--ahjo-text);color:var(--ink-2)}
 .ahjo-res-x{display:block;font-size:var(--fs-ui);color:var(--ink-2)}
+/* Ahjo's lists and notes keep the text measure (check_layout.py: no line over 44rem) on a wide screen */
+/* the shared Ahjo pages first on a course page (teacher 2026-11-08) */
+.ahjo-shared-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.6rem}
+.ahjo-shared-list a{display:grid;grid-template-columns:40px 1fr;grid-template-rows:auto auto;column-gap:.75rem;align-items:center;height:100%;box-sizing:border-box;padding:.7rem .9rem;border:1px solid var(--line);border-radius:var(--card-radius);background:#fff;text-decoration:none;color:var(--ink)}
+.ahjo-shared-list a:hover{border-color:var(--kr-navy)}
+.ahjo-shared-list a:focus-visible{outline:3px solid var(--kr-navy);outline-offset:2px}
+.ahjo-shared-mark,.ahjo-shared-icon{grid-row:1/3;width:40px;height:40px}
+.ahjo-shared-icon{padding:7px;box-sizing:border-box;border-radius:12px;background:var(--kr-pink-soft);color:var(--kr-navy)}
+.ahjo-shared-t{font:700 1.0625rem/1.3 var(--ahjo-head);color:var(--kr-navy)}
+.ahjo-shared-x{font-size:var(--fs-ui);color:var(--ink-2)}
+.ahjo-page :is(.ahjo-topics,.ahjo-goals,.ahjo-lessons,.ahjo-deep,.ahjo-approach,.ahjo-course-res,.ahjo-res-list),.ahjo-page :is(.ahjo-plan-note,.ahjo-more,.ahjo-safety-item,.ahjo-empty,.ahjo-proj-sum){max-width:44rem}
+/* the project bank (scripts/ahjo.py projects_body): one card per topic, a proposal until the teacher approves it */
+.ahjo-count{font-size:var(--fs-ui);font-weight:600;color:var(--ink-2);margin-left:.35rem;white-space:nowrap}
+.ahjo-proj-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
+@media (min-width:60rem){.ahjo-proj-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ahjo-proj{padding:1rem 1.15rem;border:1px solid var(--line);border-top:4px solid var(--kr-pink);border-radius:var(--card-radius);background:var(--paper,#fff);max-width:44rem;min-width:0}
+.ahjo-proj.approved{border-top-color:var(--kr-navy)}
+.ahjo-proj-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem}
+.ahjo-proj-head h3{margin:0;font-size:1.2rem;line-height:1.3;color:var(--kr-navy)}
+.ahjo-proj-head .ahjo-badge{flex:none;margin:0}
+.ahjo-proj-sum{margin:.45rem 0 .55rem}
+.ahjo-proj-meta{display:flex;flex-wrap:wrap;gap:.3rem;margin:0 0 .5rem;font-size:var(--fs-small)}
+.ahjo-proj-dl{margin:0;font-size:var(--fs-ui)}
+.ahjo-proj-dl dt{font-weight:700;color:var(--kr-navy);margin-top:.55rem}
+.ahjo-proj-dl dd{margin:.1rem 0 0;overflow-wrap:anywhere}
+.ahjo-ext{color:var(--ink-2);font-size:var(--fs-small);white-space:nowrap}
+.ahjo-ext::before{content:"↗ "}
+/* Ahjo 1's and Ahjo 2's icons beside their names (teacher 2026-11-08) */
+.ahjo-course-name{display:flex;align-items:center;gap:.5rem}.ahjo-course-icon{flex:none;width:40px;height:40px}
+/* a course page: the course's logo in the banner, Ahjo's logo heading the shared section (teacher 2026-11-08) */
+.ahjo-course-logo{height:auto}
+.ahjo-shared-head{display:flex;align-items:center;gap:1rem 1.25rem;margin:0 0 .8rem}
+.ahjo-shared-head h2{margin-top:0}.ahjo-shared-home{flex:none;display:block;border-radius:12px}.ahjo-shared-home:focus-visible{outline:3px solid var(--kr-navy);outline-offset:3px}.ahjo-shared-head .ahjo-sec-lead{margin-bottom:0}
+.ahjo-shared-logo{width:104px}
+@media (max-width:37.5rem){.ahjo-shared-head{align-items:flex-start}.ahjo-shared-logo{width:80px}}
