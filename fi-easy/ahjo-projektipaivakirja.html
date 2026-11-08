@@ -13,7 +13,7 @@
 <link rel="icon" href="../brand/ahjo-32.png" sizes="32x32" type="image/png">
 <link rel="icon" href="../brand/ahjo-makerspace-merkki.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../brand/ahjo-180.png">
-<link rel="stylesheet" href="../site.css?v=20ff8fe9">
+<link rel="stylesheet" href="../site.css?v=d2d565f0">
 </head><body>
 <div class="page">
 <header class="top">
@@ -165,11 +165,12 @@ Seuraava askel:
 <pre><code class="language-text">--- Tunti 6, 14.2. ---
 Tavoite: kastelupumppu käynnistyy, kun maa on kuiva.
 Tehty: Aino kytki pumpun MOSFET-moduuliin, Eetu kirjoitti koodin.
-Päätös: kynnysarvoksi 520, koska kuivan mullan lukemat olivat 540-560
-ja juuri kastellun 300-340 (3 toistoa, ks. taulukko 2).
+Päätös: pumppu käynnistyy, kun lukema ylittää 520, koska kuivan
+mullan lukemat olivat 540-560 ja juuri kastellun 300-340
+(3 toistoa, ks. taulukko 2). Kuiva multa antaa siis suuremman lukeman.
 Ongelma: pumppu käynnistyi ja sammui sekunnin välein. Syy: lukema
-heilui kynnyksen molemmin puolin. Muutos: käynnistys alle 520,
-sammutus vasta yli 560 (hystereesi).
+heilui kynnyksen molemmin puolin. Muutos: käynnistys, kun lukema
+ylittää 520, ja sammutus vasta, kun se laskee alle 400 (hystereesi).
 Seuraava askel: testataan muutos yön yli ja kirjataan lukemat.
 </code></pre>
 <h2>Testaa ja mittaa</h2>
