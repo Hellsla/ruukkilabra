@@ -87,6 +87,8 @@ header.top nav>a:active,.lang-menu>summary:active{background:var(--line)}
 @media (max-width:29.99rem){header.top nav>a.nav-modules{display:none}.brand-name small{letter-spacing:.06em}.lang-menu>summary{padding:0 10px}}
 @media (max-width:39.99rem){header.top nav>a.nav-reading,header.top nav>a.nav-study,header.top nav>a.nav-booklets{display:none}}   /* Lukuvinkit gives way first on a phone; the footer of every page links to it */
 @media (max-width:51.99rem){header.top nav>a.nav-about{display:none}}   /* Sivustosta (front page only) needs about 800 px to keep the header on one row; the footer links it */
+@media (max-width:49.99rem){header.top nav>a.nav-modules~a.nav-study{display:none}}   /* Näin opiskelet beside Moduulit (every page but the front, teacher 2026-11-08) needs about 800 px for one header row in English; the front page, without Moduulit, keeps it from 640 px */
+header.top nav>a[aria-current="page"]{color:var(--accent-deep);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:.4em}
 .visually-hidden{position:absolute!important;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* the language control: the current language on a quiet button, the others in a small panel (a <details>, no script) */
 .lang-menu{position:relative;margin:0}
@@ -198,20 +200,63 @@ main.home+footer.bottom{margin-top:1.4rem}   /* 1.75rem left the Finnish page 2 
   .plan-list{margin-top:60px}   /* the gap one row high, so the planned courses' rows stay level with the modules' (teacher 2026-11-04) */
 }
 @media (min-width:700px) and (max-width:63.99rem){.mod-name{font-size:.9375rem;line-height:1.25}.mod-q{font-size:.8125rem;line-height:1.3}.mod-row{gap:.6rem;padding-inline:.4rem}}
-/* the learning model (moved to the top of Lukuvinkit 2026-11-03): the six stage names the lessons use, a compact
-   numbered sequence on thin rules, two columns in the reading column, more tips behind a disclosure */
-.path{margin:0 0 2.6rem}
-.path h1,.path h2{margin-top:.6rem}
-.path .section-lead{margin-bottom:.4rem}
-.path-steps{list-style:none;counter-reset:step;padding:0;margin:1rem 0 0;display:grid;grid-template-columns:1fr;column-gap:1.6rem;border-top:1px solid var(--line)}
-.path-steps li{counter-increment:step;margin:0;display:grid;align-content:start;grid-template-columns:2rem minmax(0,1fr);column-gap:.4rem;padding:.6rem 0;border-bottom:1px solid var(--line-2);font-size:var(--fs-ui);line-height:1.45;color:var(--ink-2)}
-.path-steps li::before{content:counter(step);grid-row:span 2;font:600 1.25rem/1.2 var(--serif);color:var(--copper-ink)}
-.path-steps strong{font:700 1rem/1.35 var(--sans);color:var(--ink)}
-@container content (min-width:34rem){.path-steps{grid-template-columns:repeat(2,1fr)}}
-details.more-tips{margin:.6rem 0 0}
-details.more-tips>summary{min-height:44px;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
-details.more-tips ul{margin:.3rem 0 0;padding-left:1.3rem;font-size:1rem;line-height:1.55;color:var(--ink-2)}
-details.more-tips li{margin:.35rem 0}
+/* Näin opit fysiikkaa, nain-opiskelet.html (teacher 2026-11-08, build.py study_guide): a wider column than the reading
+   pages (the problem-solving map needs four cards side by side), text kept to the reading measure. Three parts under
+   full-width rules like a lesson's stages. 1 four numbered steps on thin rules, two columns, each with the lesson's
+   stage chips it means. 2 the map: the question, four ways (white cards, line icons) joined by quiet SVG curves to the
+   retry card in the accent tint; under 50rem a vertical rail with a node at each card. 3 five tips with line icons.
+   Green is the interaction colour, copper the thin accent (numbers, the question's outline). No animation. */
+main.study-page{max-width:60rem}
+.study-page .study-intro{max-width:var(--measure);padding-top:.4rem}
+.study-page .study-intro .lead{max-width:none;margin:0}
+.study-sec{margin-top:var(--stage-space);padding-top:1.1rem;border-top:2px solid var(--ink)}
+.study-sec>h2{margin:0 0 .5rem;font:600 clamp(1.5rem,1.3rem + .6vw,1.75rem)/1.2 var(--serif);letter-spacing:-.01em}
+.study-sec>.section-lead{max-width:var(--measure);font-size:var(--fs-body);margin:0 0 1.2rem}
+.study-page h3{margin:0 0 .3rem;font:700 var(--fs-h3)/1.3 var(--sans)}
+.study-page li p{margin:0;color:var(--ink-2)}
+.study-icon{width:28px;height:28px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:var(--accent-deep)}
+/* 1 Näin pääset alkuun */
+.study-steps{list-style:none;counter-reset:step;margin:.4rem 0 0;padding:0;display:grid;grid-template-columns:1fr;column-gap:2rem}
+.study-steps>li{counter-increment:step;position:relative;margin:0;padding:1rem 0 1.1rem 2.6rem;border-bottom:1px solid var(--line)}
+.study-steps>li::before{content:counter(step);position:absolute;left:0;top:.85rem;font:600 1.75rem/1 var(--serif);color:var(--copper-ink)}
+.study-where{display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0 0}
+.study-chip{display:inline-flex;align-items:center;gap:.4rem;min-height:30px;padding:0 .7rem 0 .3rem;border:1px solid var(--line);border-radius:999px;background:var(--surface);font:600 var(--fs-small)/1.2 var(--sans);color:var(--ink-2)}
+.study-chip-no{display:inline-grid;place-items:center;width:1.4rem;height:1.4rem;border-radius:50%;border:1px solid var(--line);font-size:.75rem;font-weight:700;color:var(--accent-deep)}
+@container content (min-width:40rem){.study-steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 2 Jäikö tehtävä jumiin? */
+.stuck-map{position:relative;margin:1.4rem 0 0;padding-left:2.25rem}
+.stuck-map::before{content:"";position:absolute;left:.8rem;top:1.5rem;bottom:2.5rem;border-left:2px solid var(--fig-line)}
+.stuck-q{position:relative;display:inline-block;margin:0 0 1rem;padding:.55rem 1.25rem;border:1.5px solid var(--copper);border-radius:999px;background:var(--surface);font:600 1.25rem/1.3 var(--serif);color:var(--ink)}
+.stuck-ways{list-style:none;margin:0;padding:0;display:grid;gap:.75rem}
+.stuck-ways>li,.stuck-retry{position:relative;margin:0;padding:1rem 1.1rem 1.1rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--card-radius)}
+.stuck-ways .study-icon,.stuck-retry .study-icon{display:block;margin:0 0 .5rem}
+.stuck-ways>li::before,.stuck-retry::before,.stuck-q::before{content:"";position:absolute;left:calc(-1.45rem - 6px);top:1.4rem;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--fig-line)}
+.stuck-q::before{left:calc(-1.45rem - 7.5px);top:calc(50% - 6px)}
+.stuck-retry{margin-top:1rem;background:var(--accent-soft);border-color:var(--accent)}
+.stuck-retry::before{background:var(--accent);border-color:var(--accent)}
+.stuck-retry p{margin:0;color:var(--ink-2)}
+.stuck-lines{display:none}
+@container content (min-width:50rem){
+  .stuck-map{padding-left:0;text-align:center}
+  .stuck-map::before,.stuck-ways>li::before,.stuck-retry::before,.stuck-q::before{display:none}
+  .stuck-q{margin:0}
+  .stuck-lines{display:block;width:100%;height:2.5rem;fill:none;stroke:var(--fig-line);stroke-width:2;overflow:visible}
+  .stuck-lines path{vector-effect:non-scaling-stroke}
+  .stuck-ways{grid-template-columns:repeat(4,minmax(0,1fr));gap:0 1rem;text-align:left}
+  .stuck-ways .study-icon{margin-bottom:.6rem}
+  .stuck-retry{display:inline-grid;grid-template-columns:auto minmax(0,1fr);column-gap:.8rem;align-items:start;max-width:34rem;margin:0;text-align:left}
+  .stuck-retry .study-icon{grid-row:span 2;margin:0}
+}
+/* 3 Viisi vinkkiä */
+.study-tips{list-style:none;margin:.4rem 0 0;padding:0;display:grid;grid-template-columns:1fr;column-gap:2rem}
+.study-tips>li{display:flex;gap:.9rem;align-items:flex-start;margin:0;padding:1rem 0;border-bottom:1px solid var(--line)}
+.study-tips .study-icon{margin-top:.1rem}
+@container content (min-width:40rem){.study-tips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* the closing line and the way on to the modules */
+.study-end{margin-top:var(--stage-space);max-width:var(--measure)}
+.study-end p{margin:0 0 1.1rem;font:400 1.25rem/1.45 var(--serif);color:var(--ink)}
+.study-cta{display:inline-flex;align-items:center;gap:.45rem;min-height:48px;padding:0 1.4rem;border-radius:999px;background:var(--accent-deep);color:var(--surface);font:600 var(--fs-body) var(--sans);text-decoration:none}
+.study-cta:hover{background:var(--accent)}
 /* module page: the lessons first (available ones are links, the rest marked coming), then Sovella, then the goals
    behind one disclosure; a note at #unavailable-<id> is shown when a language link from a page not published in
    this language lands here */
@@ -450,13 +495,27 @@ nav.crumbs:has(details.ch-menu){position:relative;flex-wrap:nowrap}
 table{display:block;position:relative;width:fit-content;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;border:1px solid var(--line);border-radius:12px;font-variant-numeric:tabular-nums;
   /* scroll cue: a soft shadow at an edge that has more columns behind it (covers move with the content) */
   background:linear-gradient(to right,var(--surface) 30%,transparent) left/2.5rem 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,transparent) right/2.5rem 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.2),transparent) left/.9rem 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.2),transparent) right/.9rem 100% no-repeat scroll,var(--surface)}
-th,td{padding:.45rem .8rem;text-align:left;border-bottom:1px solid var(--line-2);white-space:nowrap}
+th,td{padding:.45rem .7rem;text-align:left;border-bottom:1px solid var(--line-2);white-space:normal;hyphens:auto;-webkit-hyphens:auto}
+table caption{hyphens:auto;-webkit-hyphens:auto}
+/* a table still wider than its box is stacked (lesson.js, 2026-11-08): each row a block, each cell its heading beside the value */
+table .tbl-lab{display:none}
+table.tbl-stack{width:100%}
+table.tbl-stack caption{display:block}
+table.tbl-stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%)}
+table.tbl-stack tbody,table.tbl-stack tr{display:block}
+table.tbl-stack tr{padding:.35rem 0;border-bottom:1px solid var(--line)}
+table.tbl-stack tr:last-child{border-bottom:0}
+table.tbl-stack td,table.tbl-stack tbody th{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);column-gap:.7rem;align-items:baseline;border:0;padding:.2rem .8rem}
+table.tbl-stack .tbl-lab{display:block;font:600 var(--fs-small) var(--sans);color:var(--ink-2)}
+table.tbl-stack.tbl-blank tbody tr:not(:first-child){display:none}table.tbl-stack.tbl-blank .tbl-val{border-bottom:1px solid var(--line);min-height:1.5em}
 th{font:600 var(--fs-small) var(--sans);color:var(--ink-2);background:var(--bg-tint)}
 tr:last-child td{border-bottom:0}
-table thead,table tbody{display:table;width:100%}
-/* teacher 2026-10-28: every column visible on a phone. Below 48rem the cells wrap their words (Finnish hyphenation)
-   and pad less; a number with its unit stays on one line (KaTeX, nbsp). */
-@media (max-width:48rem){th,td{white-space:normal;hyphens:auto;-webkit-hyphens:auto;padding:.4rem .5rem}}
+/* teacher 2026-10-28 and 2026-11-08 ("en halua että taulukkoja täytyy scrollata"): every column visible at every width,
+   no sideways scrolling. The cells wrap their words (a long Finnish word at the soft hyphens build.py puts in it,
+   scripts/tablefit.py) and pad less on a phone; a number with its unit stays on one line (KaTeX, nbsp).
+   check_layout.py fails a table wider than its box. */
+@media (max-width:48rem){th,td{padding:.4rem .45rem}}
+@media (max-width:48rem){table.exp-table th,table.exp-table td{padding:.35rem .2rem}table.exp-table tr>:first-child{padding-left:.5rem}table.exp-table tr>:last-child{padding-right:.5rem}}   /* a simulation's reading table keeps its columns on a phone (its rows are compared): less space between them */
 
 /* stage navigation = the progress bar (teacher 2026-11-03): a bar of chips that sticks under the top edge at every width;
    on a narrow window it scrolls sideways inside itself (never the page). Each stage shows its number, so the nav and the
@@ -743,7 +802,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border
 .exp-controls .exp-reset:hover:not(:disabled),.exp-controls .exp-copy:hover:not(:disabled){background:var(--accent-soft);color:var(--accent-deep)}
 .exp-export-status{align-self:center;font:600 var(--fs-ui) var(--sans);color:var(--accent-deep)}
 .exp-export-text{display:block;width:100%;box-sizing:border-box;margin:.3rem 0 .7rem;font:15px/1.4 var(--mono);white-space:pre;overflow:auto}
-table.exp-table{margin:.6rem 0 .3rem}table.exp-table caption{font:600 var(--fs-small) var(--sans);color:var(--ink-2);text-align:left;padding:.3rem .8rem .1rem;white-space:nowrap}table.ex-data caption{white-space:normal;width:max-content;max-width:calc(100vw - 4rem)}   /* an exercise's data caption wraps on a phone, so its "(esimerkkiaineisto)" stays visible */
+table.exp-table{margin:.6rem 0 .3rem}table.exp-table caption{font:600 var(--fs-small) var(--sans);color:var(--ink-2);text-align:left;padding:.3rem .8rem .1rem}   /* a caption wraps at the table's width (an exercise's data caption keeps its "(esimerkkiaineisto)" visible; no table wider than its box, 2026-11-08) */
 table.exp-table tbody:empty::after{content:"";display:block;height:.3rem}
 .exp-status,.explain-status{font-size:var(--fs-ui);color:var(--ink-2);margin:.3rem 0 0;min-height:1.3em}
 .exp-question{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--line-2)}
@@ -967,6 +1026,7 @@ details.inv-teacher>summary{min-height:48px;display:flex;align-items:center;font
 .unit-credits,.unit-sources,.unit-teacher{max-width:var(--measure)}   /* every course's units (FY9 has no units.css of its own) */
 .investigation table{border-collapse:collapse;max-width:100%;display:block;overflow-x:auto}
 .investigation th,.investigation td{border:1px solid var(--line);padding:.35rem .6rem;min-width:4.5rem}
+@media (max-width:48rem){.investigation th,.investigation td{padding:.35rem .3rem;min-width:2.6rem}}   /* a blank measurement table keeps every column on a phone (no sideways scroll, 2026-11-08) */
 .inv-section{scroll-margin-top:var(--sticky-top)}
 /* a licensed photograph (FY14 units 2026-11-01; FY1–FY3 lessons 2026-11-03, assets/pics/<course>/photos.json): never wider than the reading column, at most 22rem tall so a portrait never
    fills a phone screen, centred in its box (the box keeps the width and height attributes' ratio while it loads);
@@ -1334,3 +1394,157 @@ html #exercises .ex-focus .pad .rich-text-editor-toolbar-root>div,html.tasks-spl
 .sa-desc{margin:.45rem 0 0;font-size:var(--fs-inner);color:var(--ink-2);min-height:1.5em}
 .sa-lead{margin:.2rem 0 .4rem;color:var(--ink-2)}
 .sa-n{font-weight:700;margin-right:.15em}
+
+/* Ahjo Makerspace (teacher 2026-11-08, scripts/ahjo.py): Kiviruukin lukio's makerspace in the school's identity under the
+   site's common header and footer: navy #012169, pink #fca5c7, white and black; Lato for headings, Work Sans for text
+   (self-hosted like the other fonts). The original logo is shown as the teacher's file, only scaled. Light, not heavy:
+   one tinted banner, then plain sections on white with thin rules; pink marks, navy speaks. */
+@font-face{font-family:"Lato";font-style:normal;font-weight:400;font-display:swap;src:url(vendor/fonts/lato-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Lato";font-style:normal;font-weight:700;font-display:swap;src:url(vendor/fonts/lato-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Lato";font-style:normal;font-weight:900;font-display:swap;src:url(vendor/fonts/lato-latin-900-normal.woff2) format("woff2")}
+@font-face{font-family:"Work Sans";font-style:normal;font-weight:100 900;font-display:swap;src:url(vendor/fonts/work-sans-latin-wght-normal.woff2) format("woff2")}
+@font-face{font-family:"Work Sans";font-style:italic;font-weight:100 900;font-display:swap;src:url(vendor/fonts/work-sans-latin-wght-italic.woff2) format("woff2")}
+:root:has(main.ahjo-page){--bg:#fff;--bg-tint:#f3f5f9;--ink:#0b1638;--ink-2:#3c4563;--line:#dfe5eb;--line-2:#ecf0f4;
+  --accent:#012169;--accent-deep:#012169;--accent-soft:#fff0f6;--brand-green:#012169;--kr-navy:#012169;--kr-pink:#fca5c7;--kr-pink-soft:#fde4ee;
+  --ahjo-head:"Lato",var(--sans);--ahjo-text:"Work Sans",var(--sans)}
+body:has(main.ahjo-page){background-image:none}
+main.ahjo-page{max-width:68rem;font-family:var(--ahjo-text)}
+.ahjo-page h1,.ahjo-page h2,.ahjo-page h3{font-family:var(--ahjo-head);color:var(--kr-navy);letter-spacing:0}
+.ahjo-page a{color:var(--kr-navy)}
+.ahjo-icon{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+/* the banner: the logo on white beside the heading, a pink rule under it */
+.ahjo-hero{display:flex;align-items:center;gap:1rem 1.75rem;margin:0 0 .75rem;padding:.5rem 0 1rem;border-bottom:4px solid var(--kr-pink)}
+.ahjo-logo{display:block;flex:none;width:88px;height:auto}
+.ahjo-hero-big .ahjo-logo{width:clamp(120px,9rem + 4vw,180px)}
+.ahjo-hero-text{min-width:0}
+.ahjo-eyebrow{margin:0 0 .2rem;font:700 var(--fs-small)/1.3 var(--ahjo-head);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.ahjo-hero h1{margin:0 0 .35rem;font-weight:900;font-size:clamp(1.75rem,1.3rem + 1.6vw,2.6rem);line-height:1.1}
+.ahjo-lead{margin:0;font-size:clamp(1.0625rem,1rem + .25vw,1.1875rem);line-height:1.5;color:var(--ink);max-width:44rem}
+.ahjo-opening{margin:.6rem 0 0;font-size:var(--fs-ui);color:var(--ink-2);max-width:44rem}
+@media (max-width:37.5rem){.ahjo-hero{flex-direction:column;align-items:flex-start;gap:.5rem}.ahjo-hero-big .ahjo-logo{width:132px}.ahjo-logo{width:72px}}
+/* the section's own navigation: a row of pills under the banner; wraps on a phone, never scrolls sideways */
+.ahjo-nav ul{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1.75rem;padding:0;list-style:none}
+.ahjo-nav a{display:inline-flex;align-items:center;min-height:40px;padding:0 .95rem;border:1.5px solid var(--kr-navy);border-radius:999px;font:700 var(--fs-ui) var(--ahjo-head);text-decoration:none;color:var(--kr-navy)}
+.ahjo-nav a:hover{background:var(--kr-pink-soft)}
+.ahjo-nav a[aria-current="page"]{background:var(--kr-navy);color:#fff}
+.ahjo-page a:focus-visible{outline:3px solid var(--kr-navy);outline-offset:2px}
+.ahjo-sec{margin:0 0 2.5rem}
+.ahjo-sec>h2{display:flex;align-items:center;gap:.6rem;margin:0 0 .35rem;font-size:1.5rem;font-weight:900;line-height:1.2}
+.ahjo-sec>h2::before{content:"";flex:none;width:22px;height:4px;border-radius:2px;background:var(--kr-pink)}
+.ahjo-sec>h2>.ahjo-icon{color:var(--kr-navy)}
+.ahjo-cat>h2::before{display:none}
+.ahjo-sec-lead{margin:0 0 1rem;color:var(--ink-2);max-width:44rem;font-size:var(--fs-body)}
+.ahjo-badge{display:inline-block;margin:0;padding:.1rem .6rem;border-radius:999px;background:var(--kr-navy);color:#fff;font:700 .8125rem/1.5 var(--ahjo-head);white-space:nowrap}
+.ahjo-badge.planned{background:var(--kr-pink-soft);color:var(--kr-navy);border:1px solid var(--kr-pink)}
+.ahjo-badge-s,.ahjo-tag{display:inline-block;padding:0 .45rem;border-radius:999px;background:var(--bg-tint);font:600 .8125rem/1.6 var(--ahjo-text);color:var(--ink-2)}
+/* Ahjo 1 and Ahjo 2 side by side from 44rem */
+.ahjo-courses{display:grid;grid-template-columns:minmax(0,1fr);gap:1rem}
+@media (min-width:44rem){.ahjo-courses{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ahjo-course{padding:1.1rem 1.25rem 1rem;border:1px solid var(--line);border-top:5px solid var(--kr-navy);border-radius:var(--card-radius);background:#fff}
+.ahjo-course-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.4rem .75rem;margin:0 0 .5rem}
+.ahjo-course h3{margin:0;display:flex;flex-direction:column;font-size:1.375rem;line-height:1.2}
+.ahjo-course-name{font-weight:900}
+.ahjo-course-sub{font-weight:700;font-size:1.0625rem;color:var(--ink-2)}
+.ahjo-course-text{margin:0 0 .6rem}
+.ahjo-topics{margin:0;padding:0;list-style:none;display:grid;gap:.3rem}
+.ahjo-topics li{position:relative;padding-left:1.15rem}
+.ahjo-topics li::before{content:"";position:absolute;left:0;top:.62em;width:.5rem;height:.5rem;border-radius:2px;background:var(--kr-pink)}
+/* the bank's topics: a quiet two- to four-column list, not cards */
+.ahjo-cats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);border-top:1px solid var(--line)}
+@media (min-width:40rem){.ahjo-cats{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.5rem}}
+@media (min-width:64rem){.ahjo-cats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ahjo-cats li{border-bottom:1px solid var(--line)}
+.ahjo-cats a{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:.65rem;align-items:start;min-height:56px;padding:.6rem .4rem;text-decoration:none;border-radius:8px}
+.ahjo-cats a:hover{background:var(--kr-pink-soft)}
+.ahjo-cats .ahjo-icon{grid-row:span 2;margin-top:.1rem;color:var(--kr-navy)}
+.ahjo-cat-t{font:700 1rem/1.3 var(--ahjo-head);color:var(--kr-navy)}
+.ahjo-cat-n{font-size:var(--fs-small);color:var(--ink-2)}
+.ahjo-more{margin:.75rem 0 0}.ahjo-more a{font:700 var(--fs-ui) var(--ahjo-head);display:inline-flex;align-items:center;min-height:40px}
+/* the equipment: groups in columns, each a heading with its icon and a plain list */
+.ahjo-equip{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17rem),1fr));gap:1.25rem 1.75rem}
+.ahjo-eq h3{display:flex;align-items:center;gap:.5rem;margin:0 0 .4rem;padding-bottom:.35rem;border-bottom:2px solid var(--kr-pink);font-size:1.0625rem;line-height:1.3}
+.ahjo-eq ul{margin:0;padding-left:1.1rem;font-size:var(--fs-ui);line-height:1.5}
+.ahjo-eq li{margin:.15rem 0}.ahjo-eq li::marker{color:var(--kr-navy)}
+/* safety on the start page: one quiet panel */
+.ahjo-safety-teaser{display:flex;gap:1rem;align-items:flex-start;padding:1.1rem 1.25rem;border-radius:var(--card-radius);background:var(--kr-pink-soft)}
+.ahjo-safety-teaser h2{margin:0 0 .3rem;font-size:1.375rem;font-weight:900}
+.ahjo-safety-teaser p{margin:0 0 .4rem}
+.ahjo-icon-big{width:40px;height:40px;color:var(--kr-navy)}
+.ahjo-draft-short{font-size:var(--fs-ui);color:var(--ink-2)}
+/* studies linked to Ahjo */
+.ahjo-links{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr)}
+@media (min-width:52rem){.ahjo-links{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.75rem}}
+.ahjo-links>li{padding:.7rem 0;border-bottom:1px solid var(--line)}
+.ahjo-links p{margin:0}
+.ahjo-link-name{font:700 1.0625rem/1.4 var(--ahjo-head);color:var(--kr-navy)}
+.ahjo-link-name a{display:inline-flex;align-items:center;min-height:40px}
+.ahjo-link-name>span:first-child{display:inline-flex;align-items:center;min-height:40px}
+.ahjo-link-text{font-size:var(--fs-ui);color:var(--ink-2)}
+.ahjo-link-cats{display:flex;flex-wrap:wrap;gap:.3rem;margin:.4rem 0 0;padding:0;list-style:none}
+.ahjo-link-cats a{display:inline-flex;align-items:center;min-height:40px;padding:0 .7rem;border-radius:999px;background:var(--bg-tint);font-size:var(--fs-small);text-decoration:none}
+.ahjo-link-cats a:hover{background:var(--kr-pink-soft)}
+/* the bank page: each topic a section, each resource a row */
+.ahjo-res-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.ahjo-res{padding:.75rem 0;border-bottom:1px solid var(--line)}
+.ahjo-res p{margin:0}
+.ahjo-res-head{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .5rem}
+.ahjo-res-title{font:700 1.0625rem/1.4 var(--ahjo-head)}
+.ahjo-res-title a{display:inline-flex;align-items:center;min-height:40px}
+.ahjo-res.coming .ahjo-res-title{color:var(--ink-2)}
+.ahjo-kind{font:600 var(--fs-small) var(--ahjo-text);color:var(--ink-2)}
+.ahjo-res-text{margin-top:.15rem!important;font-size:var(--fs-ui);max-width:44rem}
+.ahjo-res-meta{margin-top:.3rem!important;font-size:var(--fs-small);color:var(--ink-2);display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .35rem}
+.ahjo-meta-l{font-weight:600;color:var(--ink-2)}
+.ahjo-chip{display:inline-block;padding:0 .5rem;border-radius:999px;border:1px solid var(--kr-pink);background:var(--kr-pink-soft);color:var(--kr-navy);font-weight:600;line-height:1.6}
+.ahjo-empty{margin:0;padding:.75rem 0;border-top:1px solid var(--line);color:var(--ink-2);font-size:var(--fs-ui)}
+/* the safety page */
+.ahjo-draft{display:flex;gap:.75rem;align-items:flex-start;margin:0 0 1.5rem;padding:1rem 1.15rem;border:1px solid var(--kr-pink);border-left:6px solid var(--kr-navy);border-radius:10px;background:var(--kr-pink-soft);max-width:48rem}
+.ahjo-draft .ahjo-icon{color:var(--kr-navy);margin-top:.1rem}
+.ahjo-safety{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;grid-template-columns:minmax(0,1fr);column-gap:1.75rem;border-top:1px solid var(--line)}
+@media (min-width:52rem){.ahjo-safety{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ahjo-safety-item{padding:.8rem 0;border-bottom:1px solid var(--line);counter-increment:s}
+.ahjo-safety-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.3rem .75rem}
+.ahjo-safety-head h2{margin:0;font-size:1.125rem;line-height:1.35;font-weight:700}
+.ahjo-safety-head h2::before{content:counter(s) ". ";color:var(--ink-2)}
+.ahjo-safety-item>p{margin:.25rem 0 0}
+.ahjo-approved{font-size:var(--fs-small);color:var(--ink-2)}
+/* the front page's row: the logo as is, a little larger than a module icon so its mark reads */
+.ahjo-list{border-top:0}   /* continues the school's own list, so the planned rows stay level with the modules' */
+@media print{.ahjo-nav{display:none}}
+@media (min-width:700px){.ahjo-list+.plan-list{margin-top:0}}   /* the Ahjo row takes the one-row gap, so the front page still fits 1440 x 900 */
+.ahjo-topics li{margin:0}
+/* a course's goals and its 16-lesson outline: two closed boxes in its card (teacher 2026-11-08) */
+.ahjo-plan-note{margin:.8rem 0 .2rem;font-size:var(--fs-small);color:var(--ink-2);font-style:italic}
+.ahjo-plan{margin:.4rem 0 0;border-top:1px solid var(--line)}
+.ahjo-plan>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font:700 var(--fs-ui) var(--ahjo-head);color:var(--kr-navy)}
+.ahjo-plan>summary:focus-visible{outline:3px solid var(--kr-navy);outline-offset:2px;border-radius:6px}
+.ahjo-plan p{margin:0 0 .3rem;font-size:var(--fs-ui);color:var(--ink-2)}
+.ahjo-plan ul{margin:0 0 .6rem;padding-left:1.2rem;font-size:var(--fs-ui)}
+.ahjo-lessons{margin:0 0 .6rem;padding-left:1.6rem;font-size:var(--fs-ui)}
+.ahjo-lessons li{margin:.25rem 0}.ahjo-lessons li::marker{color:var(--kr-navy);font-weight:700}
+.ahjo-lesson-t{font-weight:700;color:var(--kr-navy)}.ahjo-lesson-x{color:var(--ink-2)}
+.ahjo-courses{align-items:start}
+.ahjo-lesson-e{display:block;margin:.15rem 0 .1rem;padding-left:.6rem;border-left:3px solid var(--kr-pink);color:var(--ink)}
+/* the section's illustrations (scripts/ahjo_art.py, teacher 2026-11-08): one atop each course card, one beside each bank topic */
+.ahjo-art{display:block;width:100%;height:auto}
+/* a picture for each lesson (teacher 2026-11-08 "Haluan kuvat tunneille"): small at the left of the lesson's text */
+.ahjo-lessons li{margin:.55rem 0}
+.ahjo-lesson{display:flow-root}
+.ahjo-lesson-art{float:left;width:112px;margin:.15rem .75rem .3rem 0;border-radius:8px;overflow:hidden}.ahjo-lesson-b{display:block;overflow:hidden}
+@media (max-width:480px){.ahjo-lesson-art{float:none;display:block;width:132px;margin:.1rem 0 .4rem}}
+.ahjo-course-art{margin:-.35rem -.5rem .8rem}
+.ahjo-cat-top{display:grid;grid-template-columns:minmax(0,1fr);gap:.25rem 1.5rem;align-items:center}
+.ahjo-cat-top h2{display:flex;align-items:center;gap:.6rem;margin:0 0 .35rem;font-size:1.5rem;font-weight:900;line-height:1.2}
+.ahjo-cat-top h2>.ahjo-icon{color:var(--kr-navy)}
+.ahjo-cat-art{max-width:200px;margin:0 0 .75rem}
+@media (min-width:40rem){.ahjo-cat-top{grid-template-columns:minmax(0,1fr) 200px}.ahjo-cat-art{margin:0}}
+/* Ahjo 1 and Ahjo 2 on their own pages (teacher 2026-11-08): the licence, goals, lessons and links to Ahjo's materials */
+.ahjo-badges{display:flex;flex-wrap:wrap;gap:.35rem}
+.ahjo-license{border-left:5px solid var(--kr-pink)}
+.ahjo-course-page-art{max-width:420px;margin:0 0 .8rem}
+.ahjo-goals{margin:0;padding-left:1.2rem}.ahjo-goals li{margin:.3rem 0}
+.ahjo-course-res{list-style:none;margin:0 0 .6rem;padding:0}
+.ahjo-course-res li{padding:.55rem 0;border-bottom:1px solid var(--line)}
+.ahjo-course-res a{display:inline-flex;align-items:center;min-height:32px;font:700 1.0625rem/1.4 var(--ahjo-head)}
+.ahjo-res-k{display:inline-block;margin-left:.3rem;padding:0 .45rem;border-radius:999px;background:var(--bg-tint);font:600 .8125rem/1.6 var(--ahjo-text);color:var(--ink-2)}
+.ahjo-res-x{display:block;font-size:var(--fs-ui);color:var(--ink-2)}
