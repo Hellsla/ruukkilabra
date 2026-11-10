@@ -26,6 +26,7 @@
   <url><loc>https://ruukkilab.fi/FY8.html</loc></url>
   <url><loc>https://ruukkilab.fi/FY9.html</loc></url>
   <url><loc>https://ruukkilab.fi/KILPAROBO.html</loc></url>
+  <url><loc>https://ruukkilab.fi/LUMATUTOR.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-1-tunti-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-1-tunti-10.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-1-tunti-11.html</loc></url>
@@ -93,6 +94,7 @@
   <url><loc>https://ruukkilab.fi/en/FY8.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY9.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/KILPAROBO.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/LUMATUTOR.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-1-tunti-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-1-tunti-10.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-1-tunti-11.html</loc></url>
@@ -301,7 +303,22 @@
   <url><loc>https://ruukkilab.fi/en/fy9-ympyraliike.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/</loc></url>
   <url><loc>https://ruukkilab.fi/en/kasitteet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/kilparobo-kausi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/kilparobo-mentorointi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/kilparobo-polku.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/kilparobo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/lukuvinkit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-arvioi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-perehdy.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-suunnittele.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-toteuta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tutustu.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyokalut.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyopaja-ilmastodata.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyopaja-paperisilta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyopaja-salakirjoitukset.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyopaja-valo-ja-varit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/lumatutor-tyopaja-virtapiiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/nain-opiskelet.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/palautukset.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/tietoa.html</loc></url>
@@ -328,6 +345,7 @@
   <url><loc>https://ruukkilab.fi/fi-easy/FY8.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/FY9.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/KILPAROBO.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/LUMATUTOR.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-1-tunti-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-1-tunti-10.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-1-tunti-11.html</loc></url>
@@ -507,7 +525,22 @@
   <url><loc>https://ruukkilab.fi/fi-easy/fy9-ympyraliike.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/kasitteet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/kilparobo-kausi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/kilparobo-mentorointi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/kilparobo-polku.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/kilparobo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/lukuvinkit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-arvioi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-perehdy.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-suunnittele.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-toteuta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tutustu.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyokalut.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyopaja-ilmastodata.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyopaja-paperisilta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyopaja-salakirjoitukset.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyopaja-valo-ja-varit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/lumatutor-tyopaja-virtapiiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/nain-opiskelet.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/palautukset.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/tietoa.html</loc></url>
@@ -673,7 +706,22 @@
   <url><loc>https://ruukkilab.fi/fy9-ympyraliike.html</loc></url>
   <url><loc>https://ruukkilab.fi/</loc></url>
   <url><loc>https://ruukkilab.fi/kasitteet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/kilparobo-kausi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/kilparobo-mentorointi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/kilparobo-polku.html</loc></url>
+  <url><loc>https://ruukkilab.fi/kilparobo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/lukuvinkit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-arvioi.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-perehdy.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-suunnittele.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-toteuta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tutustu.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyokalut.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyopaja-ilmastodata.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyopaja-paperisilta.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyopaja-salakirjoitukset.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyopaja-valo-ja-varit.html</loc></url>
+  <url><loc>https://ruukkilab.fi/lumatutor-tyopaja-virtapiiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/nain-opiskelet.html</loc></url>
   <url><loc>https://ruukkilab.fi/palautukset.html</loc></url>
   <url><loc>https://ruukkilab.fi/tietoa.html</loc></url>
