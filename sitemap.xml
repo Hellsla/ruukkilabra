@@ -63,7 +63,13 @@
   <url><loc>https://ruukkilab.fi/ahjo-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-3d-mallinnus.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-3d-tulostus.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-airbit-kokoaminen.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-airbit-ohjaus.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-arduino.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-drone-data.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-drone-lentokokeet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-drone-perehdytys.html</loc></url>
+  <url><loc>https://ruukkilab.fi/ahjo-fpv-lento.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-harjarobotti.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-led-piiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-materiaalit.html</loc></url>
@@ -75,6 +81,23 @@
   <url><loc>https://ruukkilab.fi/ahjo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo-valokortti.html</loc></url>
   <url><loc>https://ruukkilab.fi/ahjo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-1.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-10.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-11.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-12.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-13.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-14.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-15.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-16.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-2.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-3.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-4.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-5.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-6.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-7.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-8.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra-tunti-9.html</loc></url>
+  <url><loc>https://ruukkilab.fi/dronelabra.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY1-sovella.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY1.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/FY14.html</loc></url>
@@ -131,7 +154,13 @@
   <url><loc>https://ruukkilab.fi/en/ahjo-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-3d-mallinnus.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-3d-tulostus.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-airbit-kokoaminen.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-airbit-ohjaus.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-arduino.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-drone-data.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-drone-lentokokeet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-drone-perehdytys.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/ahjo-fpv-lento.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-harjarobotti.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-led-piiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-materiaalit.html</loc></url>
@@ -143,6 +172,23 @@
   <url><loc>https://ruukkilab.fi/en/ahjo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo-valokortti.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/ahjo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-1.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-10.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-11.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-12.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-13.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-14.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-15.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-16.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-2.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-3.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-4.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-5.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-6.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-7.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-8.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra-tunti-9.html</loc></url>
+  <url><loc>https://ruukkilab.fi/en/dronelabra.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/en/fy1-3.html</loc></url>
@@ -382,7 +428,13 @@
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-3d-mallinnus.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-3d-tulostus.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-airbit-kokoaminen.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-airbit-ohjaus.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-arduino.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-drone-data.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-drone-lentokokeet.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-drone-perehdytys.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/ahjo-fpv-lento.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-harjarobotti.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-led-piiri.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-materiaalit.html</loc></url>
@@ -394,6 +446,23 @@
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-turvallisuus.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo-valokortti.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/ahjo.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-1.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-10.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-11.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-12.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-13.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-14.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-15.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-16.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-2.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-3.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-4.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-5.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-6.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-7.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-8.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra-tunti-9.html</loc></url>
+  <url><loc>https://ruukkilab.fi/fi-easy/dronelabra.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-1.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-2.html</loc></url>
   <url><loc>https://ruukkilab.fi/fi-easy/fy1-3.html</loc></url>
