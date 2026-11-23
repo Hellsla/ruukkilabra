@@ -230,7 +230,7 @@ m_1 v_1 + m_2 v_2 &= m_1 v_1' + m_2 v_2'
 <li>Laske kummankin vaunun liikemäärän muutos törmäyksessä. Tukevatko mittauksesi sitä, että muutokset ovat yhtä suuret ja vastakkaissuuntaiset, kuten Newtonin kolmannesta laista seuraa?</li>
 </ol>
 <div class="inv-tuki" data-modes="O OO"><p><strong>Miksi juuri tämä kuvaaja?</strong> Jos kokonaisliikemäärä säilyy, jokaisen törmäyksen piste on suoralla $p_\text{kok}' = p_\text{kok}$, joka kulkee origon kautta ja jonka kulmakerroin on $1$. Suora on piirretty kuvaajaan mallina: siinä ei ole mittauspisteitä. Kun vaunut liikkuvat toisiaan kohti, kokonaisliikemäärä voi olla negatiivinen, joten akseleita voi joutua jatkamaan origon toiselle puolelle.</p>
-<p><svg width="600" data-fig="model" viewBox="0 0 600 330" role="img" aria-label="Kuvaaja: kokonaisliikemäärä törmäyksen jälkeen kokonaisliikemäärän ennen törmäystä funktiona, jos liikemäärä säilyy. Kuvaaja on origon kautta kulkeva suora, jonka kulmakerroin on yksi. Kuvassa näkyy positiivisten liikemäärien osa: jos liikemäärän suuruus pienenee törmäyksessä, piste on suoran alapuolella. Kuvaajassa ei ole mittauspisteitä." style="max-width:100%;font-size:24px">
+<p><svg width="600" data-fig="model" viewBox="0 0 600 330" role="img" aria-label="Mallikuvaaja: kokonaisliikemäärä törmäyksen jälkeen kokonaisliikemäärän ennen törmäystä funktiona mallin mukaan, jos liikemäärä säilyy. Kuvaaja on origon kautta kulkeva suora, jonka kulmakerroin on yksi. Kuvassa näkyy positiivisten liikemäärien osa: jos liikemäärän suuruus pienenee törmäyksessä, piste on suoran alapuolella. Kuvaajassa ei ole mittauspisteitä." style="max-width:100%;font-size:24px">
   <line x1="89" y1="280" x2="478" y2="280" stroke="#1f2933" stroke-width="2.5" stroke-linecap="butt"/>
   <path d="M490,280 L477,286 L477,274 Z" fill="#1f2933" stroke-linejoin="round"/>
   <line x1="90" y1="281" x2="90" y2="42" stroke="#1f2933" stroke-width="2.5" stroke-linecap="butt"/>
@@ -244,7 +244,7 @@ m_1 v_1 + m_2 v_2 &= m_1 v_1' + m_2 v_2'
   <path d="M379,179 L374.5,169 L383.5,169 Z" fill="#6b7480" stroke-linejoin="round"/>
   <foreignObject x="297" y="190" width="164" height="24" overflow="visible"><div xmlns="http://www.w3.org/1999/xhtml" class="fig-tex" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:20px;color:#6b7480">$\text{suuruus pienenee}$</div></foreignObject>
 </svg></p>
-<p>Jos ulkoinen voima, kuten vierimisvastus, on pienentänyt kokonaisliikemäärän suuruutta (itseisarvoa), tai nopeudet on luettu liian kaukaa törmäyksestä, pisteet poikkeavat suoralta järjestelmällisesti: kun $p_\text{kok} > 0$, ne ovat suoran alapuolella, ja kun $p_\text{kok} < 0$, suoran yläpuolella.</p></div>
+<p>Jos ulkoinen voima, kuten vierimisvastus, on pienentänyt kokonaisliikemäärän suuruutta (itseisarvoa), tai nopeudet on luettu liian kaukaa törmäyksestä, pisteet poikkeavat suoralta järjestelmällisesti. Jos kumpikin vaunu liikkuu kokonaisliikemäärän suuntaan tai on levossa (esimerkiksi vaunu 2 on aluksi levossa), pisteet ovat suoran alapuolella, kun $p_\text{kok} > 0$, ja yläpuolella, kun $p_\text{kok} < 0$. Vastakkaisessa törmäyksessä vierimisvastuksen impulssit kumoavat osin toisensa, joten poikkeaman suunta riippuu vaunujen massoista ja nopeuksista.</p></div>
 </section><section class="inv-section" id="epavarmuus-ja-luotettavuus"><h2 id="h-epavarmuus-ja-luotettavuus">Epävarmuus ja luotettavuus</h2>
 <p>Perustele jokaisen törmäyksen kohdalla, onko kokonaisliikemäärien erotus $p_\text{kok}' - p_\text{kok}$ pienempi kuin erotuksen epävarmuus, ja kerro, miten arvioit epävarmuuden.</p>
 <div class="inv-tuki" data-modes="O OO"><p>Kokonaisliikemäärän epävarmuuden voit arvioida jommallakummalla tavalla:</p>
@@ -280,7 +280,7 @@ m_1 v_1 + m_2 v_2 &= m_1 v_1' + m_2 v_2'
 <p><strong>Tavallisia virhekäsityksiä ja ongelmia.</strong></p>
 <ul>
 <li>Oikeanpuoleisen anturin lukemia ei muuteta yhteisen positiivisen suunnan mukaisiksi. Silloin vastakkaiseen suuntaan liikkuvien vaunujen liikemäärät lasketaan yhteen samanmerkkisinä, ja kokonaisliikemäärä näyttää muuttuvan paljon. Täysin kimmoton törmäys paljastaa virheen: yhdessä liikkuvien vaunujen nopeudet ovat silloin vastakkaismerkkiset.</li>
-<li>Nopeuksia luetaan liian kaukaa törmäyksestä, jolloin vierimisvastus näkyy siinä, että kokonaisliikemäärän itseisarvo pienenee järjestelmällisesti. Kuvaajassa $p_\text{kok}'$–$p_\text{kok}$ pisteet ovat silloin suoran alapuolella, kun $p_\text{kok} > 0$, ja yläpuolella, kun $p_\text{kok} < 0$.</li>
+<li>Nopeuksia luetaan liian kaukaa törmäyksestä, jolloin vierimisvastus näkyy järjestelmällisenä erona kokonaisliikemäärissä ennen törmäystä ja sen jälkeen. Kun kumpikin vaunu liikkuu kokonaisliikemäärän suuntaan tai on levossa (esimerkiksi vaunu 2 on aluksi levossa), kuvaajassa $p_\text{kok}'$–$p_\text{kok}$ pisteet ovat suoran alapuolella, kun $p_\text{kok} > 0$, ja yläpuolella, kun $p_\text{kok} < 0$. Vastakkaisessa törmäyksessä vierimisvastuksen impulssit kumoavat osin toisensa, ja poikkeaman suunta riippuu vaunujen massoista ja nopeuksista.</li>
 <li>Opiskelija pitää vaunua kädessä törmäyksen alkaessa tai työntää sitä vielä törmäyksen aikana. Käden voima on ulkoinen voima.</li>
 <li>Massaksi kirjataan vain lisäpunnusten massa eikä koko vaunun massaa.</li>
 <li>Ajatellaan, että täysin kimmottomassa törmäyksessä liikemäärää häviää, koska liike-energiaa häviää. Laajennus on tehty tämän erottamiseen.</li>
@@ -307,5 +307,5 @@ d.addEventListener('toggle',function(){if(d.open)open(d);});d.flMathOpen=functio
 renderMathInElement(root,O);flGlueMath(root);};
 window.addEventListener('beforeprint',function(){document.querySelectorAll('details[data-fl-math="wait"]').forEach(function(d){d.flMathOpen();});});</script>
 <script src="vendor/katex/contrib/auto-render.min.js" onload="flMath(document.body)"></script>
-<script src="offline.js?v=43b02848" defer></script><script src="lesson.js?v=a0c4b216"></script><script src="readaloud.js?v=7e9dade7"></script><script src="investigation.js?v=1c6a4d0d"></script>
+<script src="offline.js?v=43b02848" defer></script><script src="lesson.js?v=ea0a6103"></script><script src="readaloud.js?v=7e9dade7"></script><script src="investigation.js?v=1c6a4d0d"></script>
 </body></html>
